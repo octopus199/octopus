@@ -214,10 +214,8 @@ public class ToDoLayoutControl : MonoBehaviour
 //        
 //    }
 
-<<<<<<< HEAD
+
 //1
 
-=======
 //2
->>>>>>> 7a80bd7b131766f3718ea2d8f4e598e1f0fc29a8
 }
