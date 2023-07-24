@@ -34,6 +34,7 @@ public class AnimationControl : MonoBehaviour
     public bool turnOffAnimatorAfterJoin;
     public bool doLayoutChange;
 
+    public bool onlyMinOrMax;
     public bool toMin;
     public int spawnOperation;
     public GameObject[] minBindButton;
@@ -57,20 +58,62 @@ public class AnimationControl : MonoBehaviour
 
     void Start()
     {
-        if (PlayerPrefs.GetInt("animDistable") == 0)
+        if (!onlyMinOrMax)
         {
-            if (waitBeforeJoin)
+            if (PlayerPrefs.GetInt("animDistable") == 0)
             {
-                StartCoroutine(waitJoin());
+                if (waitBeforeJoin)
+                {
+                    StartCoroutine(waitJoin());
+                }
+                onJoinControl();
             }
-            onJoinControl();
+            else
+            {
+                Debug.Log("Animations Distabled!");
+                anim = GetComponent<Animator>();
+                anim.SetBool("SkipJoin", true);
+                if (toMin)
+                {
+                    for (int i = 0; i != invisibleOnMin.Length & spawnOperation == 0; i++)
+                    {
+                        invisibleOnMin[i].GetComponent<Animator>().SetBool("StayInvisible", true);
+                        invisibleOnMin[i].GetComponent<Animator>().SetBool("SkipJoin", false);
+                    }
+                    for (int i = 0; i != invisibleOnMax.Length & spawnOperation == 1; i++)
+                    {
+                        invisibleOnMax[i].GetComponent<Animator>().SetBool("StayInvisible", true);
+                        invisibleOnMax[i].GetComponent<Animator>().SetBool("SkipJoin", false);
+                    }
+                    for (int i = 0; i != activeIfMin.Length & spawnOperation == 0; i++)
+                    {
+                        activeIfMin[i].SetActive(false);
+                    }
+                    for (int i = 0; i != activeIfMax.Length & spawnOperation == 1; i++)
+                    {
+                        activeIfMax[i].SetActive(false);
+                    }
+                    for (int i = 0; i != minBindButton.Length; i++)
+                    {
+                        minBindButton[i].GetComponent<Button>().onClick.AddListener(delegate { StartCoroutine(ToMinOperationIfAnimDistabled(anim, false)); });
+                        Debug.Log("ToMin " + i + " connected!");
+                    }
+                    for (int i = 0; i != maxBindButton.Length; i++)
+                    {
+                        maxBindButton[i].GetComponent<Button>().onClick.AddListener(delegate { StartCoroutine(ToMinOperationIfAnimDistabled(anim, true)); });
+                        Debug.Log("ToMax " + i + " connected!");
+                    }
+                    StartCoroutine(ATM(true));
+                }
+                if (turnOffAnimatorAfterJoin)
+                {
+                    anim.enabled = false;
+                }
+            }
         }
-        else
+        else if (onlyMinOrMax & toMin)
         {
-            Debug.Log("Animations Distabled!");
-            anim = GetComponent<Animator>();
-            anim.SetBool("SkipJoin", true);
-            if (toMin)
+            if (PlayerPrefs.GetInt("animDistable") == 1)
             {
                 for (int i = 0; i != invisibleOnMin.Length & spawnOperation == 0; i++)
                 {
@@ -102,9 +145,33 @@ public class AnimationControl : MonoBehaviour
                 }
                 StartCoroutine(ATM(true));
             }
-            if (turnOffAnimatorAfterJoin)
+            else
             {
-                anim.enabled = false;
+                if (spawnOperation == 0) { SpawnMin(anim); }
+                for (int i = 0; i != minBindButton.Length; i++)
+                {
+                    minBindButton[i].GetComponent<Button>().onClick.AddListener(delegate { StartCoroutine(ToMinOperation(anim, false)); });
+                    Debug.Log("ToMin " + i + " connected!");
+                }
+                for (int i = 0; i != maxBindButton.Length; i++)
+                {
+                    maxBindButton[i].GetComponent<Button>().onClick.AddListener(delegate { StartCoroutine(ToMinOperation(anim, true)); });
+                    Debug.Log("ToMax " + i + " connected!");
+                }
+                if (spawnOperation == 1)
+                {
+                    StartCoroutine(ATM(true));
+                    for (int i = 0; i != activeIfMin.Length; i++)
+                    {
+                        activeIfMin[i].SetActive(false);
+                    }
+                    for (int i = 0; i != invisibleOnMax.Length; i++)
+                    {
+                        invisibleOnMin[i].GetComponent<Animator>().SetBool("StayInvisible", true);
+                        invisibleOnMin[i].GetComponent<Animator>().SetBool("SkipJoin", false);
+                        invisibleOnMin[i].GetComponent<Animator>().SetBool("Join", false);
+                    }
+                }
             }
         }
     }
