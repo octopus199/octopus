@@ -853,6 +853,7 @@ GameObject:
   - component: {fileID: 362763532}
   - component: {fileID: 362763531}
   - component: {fileID: 362763534}
+  - component: {fileID: 362763535}
   m_Layer: 5
   m_Name: stores
   m_TagString: Untagged
@@ -989,6 +990,25 @@ MonoBehaviour:
   invisibleOnMax: []
   anotherToMin: []
   anotherToMinInverse: 
+--- !u!114 &362763535
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 362763529}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75c613268fb3f13459b211326697e372, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  minOrMax: 1
+  mmSpawnMin: 0
+  mmBindButtons: []
+  mmBindButtonsInverse: 
+  mmAnotherObj: []
+  mmInvisibleOnMax: []
+  mmInvisibleOnMin: []
 --- !u!1 &367091574
 GameObject:
   m_ObjectHideFlags: 0
