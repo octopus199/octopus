@@ -6,7 +6,12 @@ using UnityEditor;
 public class QuickAnim : MonoBehaviour
 {
 
-    public bool minOrMax = false;
+    //mm - Min, Max. 
+    //Min - on switch to thumbnail view.
+    //Max - on switch to full view. 
+    public bool mmIsActive = false;
+    public bool mmUseMax = true;
+    public bool mmUseMin = true;
     public bool mmSpawnMin = false;
     public Object[] mmBindButtons;
     public bool[] mmBindButtonsInverse;
@@ -15,6 +20,15 @@ public class QuickAnim : MonoBehaviour
     public Object[] mmInvisibleOnMin;
     public Object[] mmActiveOnMax;
     public Object[] mmActiveOnMin;
+    public string mmAVNToMax;
+    public string mmAVNToMin;
+
+    //je - Join, Exit. 
+    //Join - on open scene.
+    //Exit - on exit scene.
+    public bool jeIsActive;
+    public bool jeUseJoin = true;
+    public bool jeUseExit = true;
 
     // Start is called before the first frame update
     void Start()
@@ -42,37 +56,39 @@ public class CustomGUIEditor : Editor
         
     }
 
-    private EditorGUILayoutArrays.ArrayFieldSettings aSettingsB = new EditorGUILayoutArrays.ArrayFieldSettings("    Inverse (go this to Min)");
-    private EditorGUILayoutArrays.ArrayFieldSettings aSettingsGO = new EditorGUILayoutArrays.ArrayFieldSettings("    Buttons go this to Max");
-    private EditorGUILayoutArrays.ArrayFieldSettings aSettingsGOAO = new EditorGUILayoutArrays.ArrayFieldSettings("    Another GameObject's going to Min/Max");
-    private EditorGUILayoutArrays.ArrayFieldSettings aSettingsGOIGOOMax = new EditorGUILayoutArrays.ArrayFieldSettings("    GameObject's invisible on Max");
-    private EditorGUILayoutArrays.ArrayFieldSettings aSettingsGOIGOOMin = new EditorGUILayoutArrays.ArrayFieldSettings("    GameObject's invisible on Min");
-    private EditorGUILayoutArrays.ArrayFieldSettings aSettingsGOAGOOMax = new EditorGUILayoutArrays.ArrayFieldSettings("    GameObject's active on Max");
-    private EditorGUILayoutArrays.ArrayFieldSettings aSettingsGOAGOOMin = new EditorGUILayoutArrays.ArrayFieldSettings("    GameObject's active on Min");
+    private EditorGUILayoutArrays.ArrayFieldSettings AFS_mmBindButtons = new EditorGUILayoutArrays.ArrayFieldSettings("    Buttons go this to Max");
+    private EditorGUILayoutArrays.ArrayFieldSettings AFS_mmBindButtonsInverse = new EditorGUILayoutArrays.ArrayFieldSettings("    Inverse (go this to Min)");
+    private EditorGUILayoutArrays.ArrayFieldSettings AFS_mmAnotherObj = new EditorGUILayoutArrays.ArrayFieldSettings("    Another GameObject's going to Min/Max");
+    private EditorGUILayoutArrays.ArrayFieldSettings AFS_mmInvisibleOnMax = new EditorGUILayoutArrays.ArrayFieldSettings("    GameObject's invisible on Max");
+    private EditorGUILayoutArrays.ArrayFieldSettings AFS_mmInvisibleOnMin = new EditorGUILayoutArrays.ArrayFieldSettings("    GameObject's invisible on Min");
+    private EditorGUILayoutArrays.ArrayFieldSettings AFS_mmActiveOnMax = new EditorGUILayoutArrays.ArrayFieldSettings("    GameObject's active on Max");
+    private EditorGUILayoutArrays.ArrayFieldSettings AFS_mmActiveOnMin = new EditorGUILayoutArrays.ArrayFieldSettings("    GameObject's active on Min");
 
     public override void OnInspectorGUI()
     {
         serializedObject.Update();
 		EditorGUILayout.PropertyField(serializedObject.FindProperty("integers"), true);
-        _target.minOrMax = EditorGUILayout.Toggle("Use min or max", _target.minOrMax);
-        if (_target.minOrMax)
+        _target.mmIsActive = EditorGUILayout.ToggleLeft("Use Min and Max anim's", _target.mmIsActive);
+        if (_target.mmIsActive)
         {
+            _target.mmUseMax = EditorGUILayout.Toggle("   Use Max animation", _target.mmUseMax);
+            _target.mmUseMin = EditorGUILayout.Toggle("   Use Min animation", _target.mmUseMin);
             _target.mmSpawnMin = EditorGUILayout.Toggle("   Spawn in Min", _target.mmSpawnMin);
-            //Rect r = EditorGUILayout.BeginHorizontal("button");
-            _target.mmBindButtons = EditorGUILayoutArrays.GameObjectArrayField(aSettingsGO, _target.mmBindButtons, "        Size", "        GameObject");
-            //source = EditorGUILayout.ObjectField(source, typeof(GameObject), true);
-            _target.mmBindButtonsInverse = EditorGUILayoutArrays.BooleanArrayField(aSettingsB, _target.mmBindButtonsInverse, "        Size", "        GameObject");
-            //GUILayout.Label("So am I");
-            //EditorGUILayout.EndHorizontal();
-            _target.mmAnotherObj = EditorGUILayoutArrays.GameObjectArrayField(aSettingsGOAO, _target.mmAnotherObj, "        Size", "        GameObject");
-            _target.mmInvisibleOnMax = EditorGUILayoutArrays.GameObjectArrayField(aSettingsGOIGOOMax, _target.mmInvisibleOnMax, "        Size", "        GameObject");
-            _target.mmInvisibleOnMin = EditorGUILayoutArrays.GameObjectArrayField(aSettingsGOIGOOMin, _target.mmInvisibleOnMin, "        Size", "        GameObject");
-            _target.mmActiveOnMax = EditorGUILayoutArrays.GameObjectArrayField(aSettingsGOAGOOMax, _target.mmActiveOnMax, "        Size", "        GameObject");
-            _target.mmActiveOnMin = EditorGUILayoutArrays.GameObjectArrayField(aSettingsGOAGOOMin, _target.mmActiveOnMin, "        Size", "        GameObject");
+            _target.mmBindButtons = EditorGUILayoutArrays.GameObjectArrayField(AFS_mmBindButtons, _target.mmBindButtons,"         Size", "        GameObject");
+            _target.mmBindButtonsInverse = EditorGUILayoutArrays.BooleanArrayField(AFS_mmBindButtonsInverse, _target.mmBindButtonsInverse, "        Size", "        GameObject");
+            _target.mmAnotherObj = EditorGUILayoutArrays.GameObjectArrayField(AFS_mmAnotherObj, _target.mmAnotherObj, "        Size", "        GameObject");
+            _target.mmInvisibleOnMax = EditorGUILayoutArrays.GameObjectArrayField(AFS_mmInvisibleOnMax, _target.mmInvisibleOnMax, "        Size", "        GameObject");
+            _target.mmInvisibleOnMin = EditorGUILayoutArrays.GameObjectArrayField(AFS_mmInvisibleOnMin, _target.mmInvisibleOnMin, "        Size", "        GameObject");
+            _target.mmActiveOnMax = EditorGUILayoutArrays.GameObjectArrayField(AFS_mmActiveOnMax, _target.mmActiveOnMax, "        Size", "        GameObject");
+            _target.mmActiveOnMin = EditorGUILayoutArrays.GameObjectArrayField(AFS_mmActiveOnMin, _target.mmActiveOnMin, "        Size", "        GameObject");
+            _target.mmAVNToMax = EditorGUILayout.TextField("Anim Value Name, To Max: ", _target.mmAVNToMax);
+            _target.mmAVNToMin = EditorGUILayout.TextField("Anim Value Name, To Max: ", _target.mmAVNToMin);
             }
-        else
+        _target.jeIsActive = EditorGUILayout. ToggleLeft("Use Join and Exit anim's", _target.jeIsActive);
+        if(_target.jeIsActive)
         {
-            //_target.SecondString = EditorGUILayout.TextField("Второе поле: ", _target.SecondString);
+            _target.jeUseJoin = EditorGUILayout.Toggle("   Use Join animation", _target.jeUseJoin);
+            _target.jeUseExit = EditorGUILayout.Toggle("   Use Exit animation", _target.jeUseExit);
         }
     }
 }
