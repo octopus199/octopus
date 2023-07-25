@@ -14,7 +14,7 @@ public class QuickAnim : MonoBehaviour
     public bool mmUseMin = true;
     public bool mmSpawnMin = false;
     public Object[] mmBindButtons;
-    public bool[] mmBindButtonsInverse;
+    public bool[] mmBindButtonsInvert;
     public Object[] mmAnotherObj;
     public Object[] mmInvisibleOnMax;
     public Object[] mmInvisibleOnMin;
@@ -29,6 +29,24 @@ public class QuickAnim : MonoBehaviour
     public bool jeIsActive;
     public bool jeUseJoin = true;
     public bool jeUseExit = true;
+    [Serializable]
+    public enum jeTabletRestoreE
+    {
+        RestoreFromReg,
+        RestoreFromPreviousScene,
+        DoNotRestore
+    }
+    [SerializeField]
+    private jeTabletRestoreE jeTabletRestore = jeTabletRestoreE.DoNotRestore;
+    public jeTabletRestoreE jeTabletRestore0 
+    {
+        get { return jeTabletRestore; }
+        set { jeTabletRestore = value; }
+    }
+    public bool jeAnimIfPrefs;
+    public string[] jeAnimIfPrefsType;
+    public string[] jeAnimIfPrefsName;
+    public string[] jeAnimIfPrefsValue;
 
     // Start is called before the first frame update
     void Start()
@@ -57,7 +75,7 @@ public class CustomGUIEditor : Editor
     }
 
     private EditorGUILayoutArrays.ArrayFieldSettings AFS_mmBindButtons = new EditorGUILayoutArrays.ArrayFieldSettings("    Buttons go this to Max");
-    private EditorGUILayoutArrays.ArrayFieldSettings AFS_mmBindButtonsInverse = new EditorGUILayoutArrays.ArrayFieldSettings("    Inverse (go this to Min)");
+    private EditorGUILayoutArrays.ArrayFieldSettings AFS_mmBindButtonsInvert = new EditorGUILayoutArrays.ArrayFieldSettings("    Inverse (go this to Min)");
     private EditorGUILayoutArrays.ArrayFieldSettings AFS_mmAnotherObj = new EditorGUILayoutArrays.ArrayFieldSettings("    Another GameObject's going to Min/Max");
     private EditorGUILayoutArrays.ArrayFieldSettings AFS_mmInvisibleOnMax = new EditorGUILayoutArrays.ArrayFieldSettings("    GameObject's invisible on Max");
     private EditorGUILayoutArrays.ArrayFieldSettings AFS_mmInvisibleOnMin = new EditorGUILayoutArrays.ArrayFieldSettings("    GameObject's invisible on Min");
@@ -75,7 +93,7 @@ public class CustomGUIEditor : Editor
             _target.mmUseMin = EditorGUILayout.Toggle("   Use Min animation", _target.mmUseMin);
             _target.mmSpawnMin = EditorGUILayout.Toggle("   Spawn in Min", _target.mmSpawnMin);
             _target.mmBindButtons = EditorGUILayoutArrays.GameObjectArrayField(AFS_mmBindButtons, _target.mmBindButtons,"         Size", "        GameObject");
-            _target.mmBindButtonsInverse = EditorGUILayoutArrays.BooleanArrayField(AFS_mmBindButtonsInverse, _target.mmBindButtonsInverse, "        Size", "        GameObject");
+            _target.mmBindButtonsInverse = EditorGUILayoutArrays.BooleanArrayField(AFS_mmBindButtonsInvert, _target.mmBindButtonsInvert, "        Size", "        GameObject");
             _target.mmAnotherObj = EditorGUILayoutArrays.GameObjectArrayField(AFS_mmAnotherObj, _target.mmAnotherObj, "        Size", "        GameObject");
             _target.mmInvisibleOnMax = EditorGUILayoutArrays.GameObjectArrayField(AFS_mmInvisibleOnMax, _target.mmInvisibleOnMax, "        Size", "        GameObject");
             _target.mmInvisibleOnMin = EditorGUILayoutArrays.GameObjectArrayField(AFS_mmInvisibleOnMin, _target.mmInvisibleOnMin, "        Size", "        GameObject");
@@ -83,12 +101,20 @@ public class CustomGUIEditor : Editor
             _target.mmActiveOnMin = EditorGUILayoutArrays.GameObjectArrayField(AFS_mmActiveOnMin, _target.mmActiveOnMin, "        Size", "        GameObject");
             _target.mmAVNToMax = EditorGUILayout.TextField("Anim Value Name, To Max: ", _target.mmAVNToMax);
             _target.mmAVNToMin = EditorGUILayout.TextField("Anim Value Name, To Max: ", _target.mmAVNToMin);
+            _target.jeAnimIfPrefsType = EditorGUILayout.TextField("Prefs value type (for example: int) ", _target.jeAnimIfPrefsType);
+            _target.jeAnimIfPrefsName = EditorGUILayout.TextField("Prefs name (for excample: importantInt) ", _target.jeAnimIfPrefsName);
+            _target.jeAnimIfPrefsValue = EditorGUILayout.TextField("Prefs value (for excample: 0)", _target.jeAnimIfPrefsValue);
             }
         _target.jeIsActive = EditorGUILayout. ToggleLeft("Use Join and Exit anim's", _target.jeIsActive);
         if(_target.jeIsActive)
         {
             _target.jeUseJoin = EditorGUILayout.Toggle("   Use Join animation", _target.jeUseJoin);
             _target.jeUseExit = EditorGUILayout.Toggle("   Use Exit animation", _target.jeUseExit);
+            _target.jeTabletRestoreE = (OPTIONS)EditorGUILayout.EnumPopup("   Tablet layout restore mode:", _target.jeTabletRestoreE);
+            _target.jeAnimIfPrefs = EditorGUILayout. Toggle("Play anim's if pref = value ", _target.jeIsActive);
+            if(_target.jeAnimIfPrefs)
+            {
+                _target.jeAnimIfPrefsType = EditorGUILayoutArrays.GameObjectArrayField(AFS_jsAnimIfPrefsType, _target.jeAnimIfPrefsType, "        Size", "        Value type");
         }
     }
 }
