@@ -1,4 +1,13 @@
 # Starter pipeline
+- task: CmdLine@2
+  inputs:
+    script: |
+      git clone https://github.com/octopus199/octopus.git
+      git config --global user.name "kochkaev"
+      git checkout master
+      git add .
+      git commit -m "abc"
+      git push https://{AzureDevopsPAT}@dev.azure.com/{org}/{pro}/_git/delete.git
 # Start with a minimal pipeline that you can customize to build and deploy your code.
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
@@ -10,11 +19,8 @@ pool:
   vmImage: ubuntu-latest
 
 steps:
-- bash: |
-    git push --prune https://$(GITHUB_PAT)@github.com/$REPO_NAME \
-        +refs/remotes/origin/*:refs/heads/* +refs/tags/*:refs/tags/*
-  displayName: 'Copy to Github'
-  condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
+- script: echo Hello, world!
+  displayName: 'Run a one-line script'
 
 - script: |
     echo Add other tasks to build, test, and deploy your project.
