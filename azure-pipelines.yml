@@ -2,10 +2,12 @@
 - task: CmdLine@2
   inputs:
     script: |
-      git config --global user.email "edukisel@yandex.ru"
+      git clone https://github.com/octopus199/octopus.git
       git config --global user.name "kochkaev"
-      git branch -r | grep -v '\->' | while read remote; do git branch --track "${remote#origin/}" "$remote"; done
-      git push https://$(VSTSToken)@dev.azure.com/xxx/_git/xxx -u --all
+      git checkout master
+      git add .
+      git commit -m "abc"
+      git push https://{AzureDevopsPAT}@dev.azure.com/{org}/{pro}/_git/delete.git
 # Start with a minimal pipeline that you can customize to build and deploy your code.
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
