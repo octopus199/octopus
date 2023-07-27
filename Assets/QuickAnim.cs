@@ -1,17 +1,19 @@
-//using System;
+
+//  This is new version of script for object animations control
+//  Old script: AnimationControl.cs
+//  Create by @kochkaev
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
-//using UnityEngine.Serialization;
-//using Object = UnityEngine.Object;
 
 public class QuickAnim : MonoBehaviour
 {
 
-    //mm - Min, Max. 
-    //Min - on switch to thumbnail view.
-    //Max - on switch to full view. 
+    //  mm - Min, Max. 
+    //  Min - on switch to thumbnail view.
+    //  Max - on switch to full view. 
     public bool mmIsActive = false;
     public bool mmUseMax = true;
     public bool mmUseMin = true;
@@ -40,9 +42,9 @@ public class QuickAnim : MonoBehaviour
         Min = 1
     }
 
-    //je - Join, Exit. 
-    //Join - on open scene.
-    //Exit - on exit scene.
+    //  je - Join, Exit. 
+    //  Join - on open scene.
+    //  Exit - on exit scene.
     public bool jeIsActive;
     public bool jeUseJoin = true;
     public bool jeUseExit = true;
@@ -81,7 +83,7 @@ public class QuickAnim : MonoBehaviour
         Tablet = 1
     }
 
-    //another
+    //  a - another
     public string aAVNInvisible;
     public string aAVNVisible;
 
@@ -99,13 +101,13 @@ public class QuickAnim : MonoBehaviour
 
     IEnumerator MM(string operation)
     {
-        //Operation spawn. On open scene.
+        //  Operation spawn. On open scene.
         if (operation == "spawn")
         {
-            //if animations turned on in preferences.
+            //  if animations turned on in preferences.
             if (PlayerPrefs.GetInt("animDistable") == 0)
             {
-                //Spawn max
+                //  Spawn max
                 if (mmUseMax & ((!mmSpawnMin & !mmSpawnUseJE) || (mmSpawnUseJE & mmSpawnUseJEMM == "Max")))
                 {
                     if (!mmSpawnMin & !mmSpawnUseJE) 
@@ -164,7 +166,7 @@ public class QuickAnim : MonoBehaviour
                         ((GameObject) mmInvisibleOnMin[i]).GetComponent<Animator>().SetBool(mmAVNGoVisible, false);
                     }
                 }
-                //Spawn min
+                //  Spawn min
                 else if (mmUseMin & ((mmSpawnMin & !mmSpawnUseJE) || (mmSpawnUseJE & mmSpawnUseJEMM == "Min")))
                 {
                     if (mmSpawnMin & !mmSpawnUseJE)
@@ -226,10 +228,10 @@ public class QuickAnim : MonoBehaviour
                     }
                 }
             }
-            //if animations turned off in preferences.
+            //  if animations turned off in preferences.
             else if (PlayerPrefs.GetInt("animDistable") == 1)
             {
-                //Spawn max
+                //  Spawn max
                 if (mmUseMax & ((!mmSpawnMin & !mmSpawnUseJE) || (mmSpawnUseJE & mmSpawnUseJEMM == "Max")))
                 {
                     for (int i = 0; i != mmInvisibleOnMax.Length; i++)
@@ -263,7 +265,7 @@ public class QuickAnim : MonoBehaviour
                         ((GameObject) mmInvisibleOnMin[i]).GetComponent<Animator>().SetBool(aAVNVisible, true);
                     }
                 }
-                //Spawn min
+                //  Spawn min
                 else if (mmUseMin & ((mmSpawnMin & !mmSpawnUseJE) || (mmSpawnUseJE & mmSpawnUseJEMM == "Min")))
                 {
                     for (int i = 0; i != mmInvisibleOnMax.Length; i++)
@@ -299,13 +301,13 @@ public class QuickAnim : MonoBehaviour
                 }
             }
         }
-        //Operation update. On update prefs
+        //  Operation update. On update prefs
         else if (operation == "update")
         {
-            //if animations turned on in preferences.
+            //  if animations turned on in preferences.
             if (PlayerPrefs.GetInt("animDistable") == 0)
             {
-                //Spawn max
+                //  Spawn max
                 if (mmUseMax & PlayerPrefs.GetString(mmPrefs) == mmPrefsToMaxValue)
                 {
                     GetComponent<Animator>().SetBool(mmAVNMinWait, false);
@@ -359,7 +361,7 @@ public class QuickAnim : MonoBehaviour
                         ((GameObject) mmInvisibleOnMin[i]).GetComponent<Animator>().SetBool(mmAVNGoVisible, false);
                     }
                 }
-                //Spawn min
+                //  Spawn min
                 else if (mmUseMin & PlayerPrefs.GetString(mmPrefs) == mmPrefsToMinValue)
                 {
                     GetComponent<Animator>().SetBool(mmAVNMaxWait, false);
@@ -414,10 +416,10 @@ public class QuickAnim : MonoBehaviour
                     }
                 }
             }
-            //if animations turned off in preferences.
+            //  if animations turned off in preferences.
             else if (PlayerPrefs.GetInt("animDistable") == 1)
             {
-                //Spawn max
+                //  Spawn max
                 if (mmUseMax & PlayerPrefs.GetString(mmPrefs) == mmPrefsToMaxValue)
                 {
                     GetComponent<Animator>().SetBool(mmAVNMinWait, false);
@@ -451,7 +453,7 @@ public class QuickAnim : MonoBehaviour
                         ((GameObject) mmActiveOnMin[i]).SetActive(false);
                     }
                 }
-                //Spawn min
+                //  Spawn min
                 else if (mmUseMin & PlayerPrefs.GetString(mmPrefs) == mmPrefsToMinValue)
                 {
                     GetComponent<Animator>().SetBool(mmAVNMaxWait, false);
@@ -491,10 +493,10 @@ public class QuickAnim : MonoBehaviour
 
     IEnumerator JE(string operation)
     {
-        //On open scene or prefs change
+        //  On open scene or prefs change
         if (operation == "Join" & jeUseJoin)
         {
-            //if animations turned on in preferences.
+            //  if animations turned on in preferences.
             if (PlayerPrefs.GetInt("animDistable") == 0)
             {
                 if (mmIsActive)
@@ -505,7 +507,7 @@ public class QuickAnim : MonoBehaviour
                     GetComponent<Animator>().SetBool(jeAVNJoin, true);
                 }
                 string layout;
-                //Layout restore: Classic / Tablet.
+                //  Layout restore: Classic / Tablet.
                 if (jeTabletRestore == "RestoreFromReg")
                 {
                     layout = PlayerPrefs.GetString("scene_PreviousSceneLayout");
@@ -527,6 +529,8 @@ public class QuickAnim : MonoBehaviour
     }
 }
 
+
+//  Custom inspector GUI
 #if UNITY_EDITOR
 [CustomEditor(typeof(QuickAnim))]
 public class CustomGUIEditor : Editor
@@ -538,11 +542,14 @@ public class CustomGUIEditor : Editor
         _target = target as QuickAnim;
         
     }
+
+    //  Set enums
     public QuickAnim.EO_mmSpawnUseJEMM EO_mmSpawnUseJEMM;
     public QuickAnim.EO_jeTabletRestore EO_jeTabletRestore;
     public QuickAnim.EO_jeThisObjectLayout EO_jeThisObjectLayout;
 
-    //mm
+    //  Set arrays
+    //  mm
     private EditorGUILayoutArrays.ArrayFieldSettings AFS_mmBindButtons = new EditorGUILayoutArrays.ArrayFieldSettings("  |  Buttons go this to Max");
     private EditorGUILayoutArrays.ArrayFieldSettings AFS_mmBindButtonsInvert = new EditorGUILayoutArrays.ArrayFieldSettings("  |  Inverse (go this to Min)");
     private EditorGUILayoutArrays.ArrayFieldSettings AFS_mmAnotherObj = new EditorGUILayoutArrays.ArrayFieldSettings("  |  Another GameObject's going to Min/Max");
@@ -551,7 +558,7 @@ public class CustomGUIEditor : Editor
     private EditorGUILayoutArrays.ArrayFieldSettings AFS_mmActiveOnMax = new EditorGUILayoutArrays.ArrayFieldSettings("  |  GameObject's active on Max");
     private EditorGUILayoutArrays.ArrayFieldSettings AFS_mmActiveOnMin = new EditorGUILayoutArrays.ArrayFieldSettings("  |  GameObject's active on Min");
 
-    //js
+    //  js
     private EditorGUILayoutArrays.ArrayFieldSettings AFS_jsAnimIfPrefsType = new EditorGUILayoutArrays.ArrayFieldSettings("  |    |  Prefs value type (for example: int)");
     private EditorGUILayoutArrays.ArrayFieldSettings AFS_jsAnimIfPrefsName = new EditorGUILayoutArrays.ArrayFieldSettings("  |    |   Prefs name (for excample: importantInt)");
     private EditorGUILayoutArrays.ArrayFieldSettings AFS_jsAnimIfPrefsValue = new EditorGUILayoutArrays.ArrayFieldSettings("  |    |  Prefs value for start anim (for excample: 0)");
@@ -564,6 +571,7 @@ public class CustomGUIEditor : Editor
 
     public override void OnInspectorGUI()
     {
+        //  mm
         EditorGUILayout.HelpBox("Min and Max anim's - anim's for switch this object view to thumbnail (in some case go invisible) or full view.", MessageType.Info);
         _target.mmIsActive = EditorGUILayout.ToggleLeft("Use Min and Max anim's", _target.mmIsActive);
         if (_target.mmIsActive)
@@ -603,6 +611,8 @@ public class CustomGUIEditor : Editor
             _target.mmPrefsToMinValue = EditorGUILayout.TextField("  |  Value to Min: ", _target.mmPrefsToMinValue);
             EditorGUILayout.HelpBox("\n", MessageType.None);
         }
+
+        //  je
         EditorGUILayout.HelpBox("Join and Exit anim's - anim's for opening or closing the scene.", MessageType.Info);
         _target.jeIsActive = EditorGUILayout. ToggleLeft("Use Join and Exit anim's", _target.jeIsActive);
         if(_target.jeIsActive)
@@ -660,11 +670,15 @@ public class CustomGUIEditor : Editor
             EditorGUILayout.HelpBox("\n", MessageType.None);
             
         }
+
+        //  a
         EditorGUILayout.HelpBox(" |   Anim Value Name's: ", MessageType.None);
         _target.aAVNInvisible = EditorGUILayout.TextField("Invisible: ", _target.aAVNInvisible);
         _target.aAVNVisible = EditorGUILayout.TextField("Visible: ", _target.aAVNVisible);
         enumReturnString();
     }
+
+    //  Return enums to main class
     public void enumReturnString()
     {
         if (EO_mmSpawnUseJEMM == QuickAnim.EO_mmSpawnUseJEMM.Max) { _target.mmSpawnUseJEMM = "Max"; } else if (EO_mmSpawnUseJEMM == QuickAnim.EO_mmSpawnUseJEMM.Min) { _target.mmSpawnUseJEMM = "Min"; }
@@ -673,4 +687,19 @@ public class CustomGUIEditor : Editor
     }
 }
 #endif
-//1
+
+
+//  This script was create by @kochkaev
+//    - GitHub: https://github.com/kochkaev/
+//    - VK: https://vk.com/kleverdi/
+//    - YouTube: https://youtube.com/@kochkaev/
+//    - Contact email: kleverdi@vk.com
+//
+//  This script was created for OctopuS app
+//  OctopuS is mobile app for children.
+//  We create this app for help children's self-organized
+//  We help parents looking what does children and adding task for doing(for example: make homework).
+//    - GitHub: https://github.com/octopus199/octopus/
+//    - Azure: https://dev.azure.com/octopus199/octopus/
+//    - VK: https://vk.com/octopusapp/
+//    - Contact email: octopus.app199@gmail.com
