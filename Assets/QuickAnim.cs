@@ -33,9 +33,6 @@ public class QuickAnim : MonoBehaviour
     public string mmAVNMinWait;
     public string mmAVNGoInvisible;
     public string mmAVNGoVisible;
-    public string mmPrefs;
-    public string mmPrefsToMaxValue;
-    public string mmPrefsToMinValue;
     public enum EO_mmSpawnUseJEMM
     {
         Max = 0,
@@ -51,18 +48,13 @@ public class QuickAnim : MonoBehaviour
     public bool jeTurnOffAnimatorAfterJoin;
     public bool jeLayoutSwitchEnabled;
     public string jeTabletRestore = "DoNotRestore";
+    public string jeTabletExit = "DoNotRestore";
     public string jeThisObjectLayout;
     public bool jeLayoutChange;
     public Object[] jeLayoutChangeBindButtonsToTablet;
     public Object[] jeLayoutChangeBindButtonsToClassic;
-    public Object[] jeLayoutSwitchAnotherObjects;
-    public int[] jeLayoutSwitchAnotherObjectsLayout;
     public string[] jeLayoutScenesAlwaysTablet;
     public string[] jeLayoutScenesAlwaysClassic;
-    public bool jeAnimIfPrefs;
-    public string[] jeAnimIfPrefsType;
-    public string[] jeAnimIfPrefsName;
-    public string[] jeAnimIfPrefsValue;
     public bool jeWaitBeforeJoin;
     public bool jeWaitBeforeExit;
     public float jeWaitBeforeJoinSeconds = 0.0f;
@@ -75,7 +67,13 @@ public class QuickAnim : MonoBehaviour
     {
         DoNotRestore = 0,
         RestoreFromReg = 1,
-        RestoreFromPreviousScene = 2
+        RestoreFromPreviousSceneName = 2
+    }
+    public enum EO_jeTabletExit
+    {
+        DoNotRestore = 0,
+        RestoreFromReg = 1,
+        RestoreFromNextSceneName = 2
     }
     public enum EO_jeThisObjectLayout
     {
@@ -84,22 +82,85 @@ public class QuickAnim : MonoBehaviour
     }
 
     //  a - another
+    public bool aAnimIfPrefs;
+    public string[] aAnimIfPrefsType;
+    public string[] aAnimIfPrefsName;
+    public string[] aAnimIfPrefsValue;
+    public string[] aAnimIfPrefsAnim;
     public string aAVNInvisible;
     public string aAVNVisible;
 
-    // Start is called before the first frame update
+    //  Start is called before the first frame update
     void Start()
     {
-        
+        if (!jeIsActive)
+        {
+            StartCoroutine(MM("Spawn", false));
+        }
+        else if (jeIsActive) 
+        {
+            startCoroutine(JE("Join", false));
+            if (jeLayoutChange)
+            {
+                for (int i = 0; i != jeLayoutChangeBindButtonsToClassic; i++)
+                {
+                    string joinOrExit = "Join";
+                    if (jeThisObjectLayout == "Tablet")
+                    {
+                        joinOrExit = "Exit";
+                    }
+                    GetComponent<Button>().onClick.AddListener(delegate { StartCoroutine(JE(joinOrExit, true)); });
+                }
+            }
+        }
+
+        for (int i = 0; i != mmBindButtons.Length; i++)
+        {
+            string layout = "Max";
+            if (mmBindButtonsInvert[i])
+            {
+                layout = "Min";
+            }
+            mmBindButtons[i].GetComponent<Button>().onClick.AddListener(delegate { StartCoroutine(MM("Update", false, layout); });
+        }
     }
 
-    // Update is called once per frame
+    //  Update is called once per frame
     void Update()
     {
-        
+        if (aAnimIfPrefsName.Length != 0)
+        {
+            for (int i = 0; i != aAnimIfPrefsName.Length; i++)
+            {
+                bool anim = false;
+                if (aAnimIfPrefsType[i] == "int")
+                {
+                    if (aAnimIfPrefsValue[i] == PlayerPrefs.GetInt(aAnimIfPrefsName[i]).ToString())
+                    {
+                        anim = true;
+                    }
+                } else if (aAnimIfPrefsType[i] == "string")
+                {
+                    if (aAnimIfPrefsValue[i] == PlayerPrefs.GetInt(aAnimIfPrefsName[i]))
+                    {
+                        anim = true;
+                    }
+                }
+                if (anim)
+                {
+                    if ((aAnimIfPrefsAnim[i] == "Join" || aAnimIfPrefsAnim[i] == "Exit") & jeIsActive)
+                    {
+                        StartCoroutine(JE(jeAnimIfPrefsAnim[i], false));
+                    } else if ((aAnimIfPrefsAnim[i] == "Min" || aAnimIfPrefsAnim[i] == "Max") & mmIsActive)
+                    {
+                        StartCoroutine(MM("Update", false, aAnimIfPrefsAnim[i]));
+                    }
+                }
+            }
+        }
     }
 
-    IEnumerator MM(string operation)
+    IEnumerator MM(string operation, bool joinEnable, string updateLayout)
     {
         //  Operation spawn. On open scene.
         if (operation == "spawn")
@@ -113,7 +174,7 @@ public class QuickAnim : MonoBehaviour
                     if (!mmSpawnMin & !mmSpawnUseJE) 
                     {
                         GetComponent<Animator>().SetBool(mmAVNToMax, true);
-                    } else
+                    } else if (mmSpawnUseJE & joinEnable)
                     {
                         GetComponent<Animator>().SetBool(jeAVNJoin, true);
                     }
@@ -173,7 +234,7 @@ public class QuickAnim : MonoBehaviour
                     {
                         GetComponent<Animator>().SetBool(mmAVNToMin, true);
                     }
-                    else
+                    else if (mmSpawnUseJE & joinEnable)
                     {
                         GetComponent<Animator>().SetBool(jeAVNJoin, true);
                     }
@@ -307,8 +368,8 @@ public class QuickAnim : MonoBehaviour
             //  if animations turned on in preferences.
             if (PlayerPrefs.GetInt("animDistable") == 0)
             {
-                //  Spawn max
-                if (mmUseMax & PlayerPrefs.GetString(mmPrefs) == mmPrefsToMaxValue)
+                //  Update to max
+                if (mmUseMax & (PlayerPrefs.GetString(mmPrefs) == mmPrefsToMaxValue || updateLayout == "Max"))
                 {
                     GetComponent<Animator>().SetBool(mmAVNMinWait, false);
                     GetComponent<Animator>().SetBool(aAVNVisible, false);
@@ -361,8 +422,8 @@ public class QuickAnim : MonoBehaviour
                         ((GameObject) mmInvisibleOnMin[i]).GetComponent<Animator>().SetBool(mmAVNGoVisible, false);
                     }
                 }
-                //  Spawn min
-                else if (mmUseMin & PlayerPrefs.GetString(mmPrefs) == mmPrefsToMinValue)
+                //  Update to min
+                else if (mmUseMin & (PlayerPrefs.GetString(mmPrefs) == mmPrefsToMinValue || updateLayout == "Max"))
                 {
                     GetComponent<Animator>().SetBool(mmAVNMaxWait, false);
                     GetComponent<Animator>().SetBool(aAVNVisible, false);
@@ -419,8 +480,8 @@ public class QuickAnim : MonoBehaviour
             //  if animations turned off in preferences.
             else if (PlayerPrefs.GetInt("animDistable") == 1)
             {
-                //  Spawn max
-                if (mmUseMax & PlayerPrefs.GetString(mmPrefs) == mmPrefsToMaxValue)
+                //  Update to max
+                if (mmUseMax & (PlayerPrefs.GetString(mmPrefs) == mmPrefsToMaxValue || updateLayout == "Max"))
                 {
                     GetComponent<Animator>().SetBool(mmAVNMinWait, false);
                     GetComponent<Animator>().SetBool(aAVNVisible, false);
@@ -453,8 +514,8 @@ public class QuickAnim : MonoBehaviour
                         ((GameObject) mmActiveOnMin[i]).SetActive(false);
                     }
                 }
-                //  Spawn min
-                else if (mmUseMin & PlayerPrefs.GetString(mmPrefs) == mmPrefsToMinValue)
+                //  Update to min
+                else if (mmUseMin & (PlayerPrefs.GetString(mmPrefs) == mmPrefsToMinValue || updateLayout == "Max"))
                 {
                     GetComponent<Animator>().SetBool(mmAVNMaxWait, false);
                     GetComponent<Animator>().SetBool(aAVNVisible, false);
@@ -491,7 +552,7 @@ public class QuickAnim : MonoBehaviour
         }
     }
 
-    IEnumerator JE(string operation)
+    IEnumerator JE(string operation, bool itsUpdate)
     {
         //  On open scene or prefs change
         if (operation == "Join" & jeUseJoin)
@@ -499,31 +560,166 @@ public class QuickAnim : MonoBehaviour
             //  if animations turned on in preferences.
             if (PlayerPrefs.GetInt("animDistable") == 0)
             {
-                if (mmIsActive)
+                bool join = true;
+                string layout;
+                if (!itsUpdate)
                 {
-                    StartCoroutine(MM());
-                } else
+                    //  Layout restore: Classic / Tablet.
+                    yield return new WaitForSeconds(jeWaitBeforeJoin);
+                    if (jeTabletRestore == "RestoreFromReg")
+                    {
+                        layout = PlayerPrefs.GetString("scene_PreviousSceneLayout");
+                    }
+                    else if (jeTabletRestore == "RestoreFromPreviousSceneName")
+                    {
+                        string previousScene = PlayerPrefs.GetString("");
+                        for (int i = 0; i != jeLayoutScenesAlwaysTablet.Length; i++)
+                        {
+                            if (previousScene == jeLayoutScenesAlwaysTablet[i])
+                            {
+                                layout == "Tablet";
+                            }
+                            else
+                            {
+                                layout == "Classic";
+                            }
+                        }
+                    }
+                    if (jeTabletRestore != "DoNotRestore")
+                    {
+                        if (jeThisObjectLayout == layout)
+                        {
+                            if (layout == "Tablet")
+                            {
+                                join = false;
+                            }
+                        }
+                    }
+
+                    if (mmIsActive)
+                    {
+                        StartCoroutine(MM("Spawn", join, ""));
+                    }
+                    else if (join)
+                    {
+                        GetComponent<Animator>().SetBool(jeAVNJoin, true);
+                    }
+                    else
+                    {
+                        GetComponent<Animator>().SetBool(aAVNVisible, true);
+                    }
+                }
+                else
                 {
                     GetComponent<Animator>().SetBool(jeAVNJoin, true);
-                }
-                string layout;
-                //  Layout restore: Classic / Tablet.
-                if (jeTabletRestore == "RestoreFromReg")
-                {
-                    layout = PlayerPrefs.GetString("scene_PreviousSceneLayout");
-                }
-                else if (jeTabletRestore == "RestoreFromPreviousScene")
-                {
-
                 }
 
                 yield return new WaitForSeconds(jeDurationJoinSeconds);
 
-                if (jeTurnOffAnimatorAfterJoin)
+                if (jeTurnOffAnimatorAfterJoin & !itsUpdate)
                 {
                     yield return new WaitFoeSeconds(0.01f);
                     GetComponent<Animator>().enabled("false");
                 }
+                GetComponent<Animator>().SetBool(jeAVNJoin, false);
+                if ((mmSpawnUseJE & mmIsActive) || !mmIsActive)
+                {
+                    GetComponent<Animator>().SetBool(aAVNVisible, true);
+                }
+            }
+            //  if animations turned off in preferences.
+            else if (PlayerPrefs.GetInt("animDistable") == 1)
+            {
+                yield return new WaitForSeconds(jeWaitBeforeJoin);
+                if (!itsUpdate)
+                {
+                    if (mmIsActive)
+                    {
+                        StartCoroutine(MM("Spawn", join, ""));
+                    }
+                    else
+                    {
+                        GetComponent<Animator>().SetBool(aAVNVisible, true);
+                    }
+                }
+
+                if (jeTurnOffAnimatorAfterJoin & !itsUpdate)
+                {
+                    yield return new WaitFoeSeconds(0.01f);
+                    GetComponent<Animator>().enabled("false");
+                }
+                GetComponent<Animator>().SetBool(aAVNVisible, true);
+            }
+        }
+        //  On exit scene or prefs change
+        else if (operation == "Exit" & jeUseExit)
+        {
+            //  if animations turned on in preferences.
+            if (PlayerPrefs.GetInt("animDistable") == 0)
+            {
+                bool exit = true;
+                string layout;
+                yield return new WaitForSeconds(jeWaitBeforeExit);
+                if (!itsUpdate)
+                {
+                    //  Layout exit: Classic / Tablet.
+                    if (jeTabletExit == "RestoreFromReg")
+                    {
+                        layout = PlayerPrefs.GetString("scene_NextSceneLayout");
+                    }
+                    else if (jeTabletRestore == "RestoreFromNextSceneName")
+                    {
+                        string nextScene = PlayerPrefs.GetString("");
+                        for (int i = 0; i != jeLayoutScenesAlwaysTablet.Length; i++)
+                        {
+                            if (nextScene == jeLayoutScenesAlwaysTablet[i])
+                            {
+                                layout == "Tablet";
+                            }
+                            else
+                            {
+                                layout == "Classic";
+                            }
+                        }
+                    }
+                    if (jeTabletRestore != "DoNotRestore")
+                    {
+                        if (jeThisObjectLayout == layout)
+                        {
+                            if (layout == "Tablet")
+                            {
+                                exit = false;
+                            }
+                        }
+                    }
+
+                    if (exit)
+                    {
+                        GetComponent<Animator>().SetBool(jeAVNExit, true);
+                    }
+                    else
+                    {
+                        GetComponent<Animator>().SetBool(aAVNInisible, true);
+                    }
+                }
+                else
+                {
+                    GetComponent<Animator>().SetBool(jeAVNExit, true);
+                }
+
+                if (itsUpdate)
+                {
+                    yield return new WaitForSeconds(jeDurationJoinSeconds);
+
+                    GetComponent<Animator>().SetBool(jeAVNExit, false);
+                    GetComponent<Animator>().SetBool(aAVNInvisible, true);
+                }
+            }
+            //  if animations turned off in preferences.
+            else if (PlayerPrefs.GetInt("animDistable") == 1)
+            {
+                yield return new WaitForSeconds(jeWaitBeforeExit);
+                GetComponent<Animator>().SetBool(aAVNInvisible, true);
             }
         }
     }
@@ -546,6 +742,7 @@ public class CustomGUIEditor : Editor
     //  Set enums
     public QuickAnim.EO_mmSpawnUseJEMM EO_mmSpawnUseJEMM;
     public QuickAnim.EO_jeTabletRestore EO_jeTabletRestore;
+    public QuickAnim.EO_jeTabletExit EO_jeTabletExit;
     public QuickAnim.EO_jeThisObjectLayout EO_jeThisObjectLayout;
 
     //  Set arrays
@@ -559,15 +756,18 @@ public class CustomGUIEditor : Editor
     private EditorGUILayoutArrays.ArrayFieldSettings AFS_mmActiveOnMin = new EditorGUILayoutArrays.ArrayFieldSettings("  |  GameObject's active on Min");
 
     //  js
-    private EditorGUILayoutArrays.ArrayFieldSettings AFS_jsAnimIfPrefsType = new EditorGUILayoutArrays.ArrayFieldSettings("  |    |  Prefs value type (for example: int)");
-    private EditorGUILayoutArrays.ArrayFieldSettings AFS_jsAnimIfPrefsName = new EditorGUILayoutArrays.ArrayFieldSettings("  |    |   Prefs name (for excample: importantInt)");
-    private EditorGUILayoutArrays.ArrayFieldSettings AFS_jsAnimIfPrefsValue = new EditorGUILayoutArrays.ArrayFieldSettings("  |    |  Prefs value for start anim (for excample: 0)");
     private EditorGUILayoutArrays.ArrayFieldSettings AFS_jeLayoutChangeBindButtonsToTablet = new EditorGUILayoutArrays.ArrayFieldSettings("  |    |    |  Buttons switch layout to Tablet");
     private EditorGUILayoutArrays.ArrayFieldSettings AFS_jeLayoutChangeBindButtonsToClassic = new EditorGUILayoutArrays.ArrayFieldSettings("  |    |    |  Buttons switch layout to Classic");
-    private EditorGUILayoutArrays.ArrayFieldSettings AFS_jeLayoutSwitchAnotherObjects = new EditorGUILayoutArrays.ArrayFieldSettings("  |    |  Another GameObject's switch layout");
-    private EditorGUILayoutArrays.ArrayFieldSettings AFS_jeLayoutSwitchAnotherObjectsLayout = new EditorGUILayoutArrays.ArrayFieldSettings("  |    |  Another GameObject layout's (int)");
+    ///private EditorGUILayoutArrays.ArrayFieldSettings AFS_jeLayoutSwitchAnotherObjects = new EditorGUILayoutArrays.ArrayFieldSettings("  |    |  Another GameObject's switch layout");
+    ///private EditorGUILayoutArrays.ArrayFieldSettings AFS_jeLayoutSwitchAnotherObjectsLayout = new EditorGUILayoutArrays.ArrayFieldSettings("  |    |  Another GameObject layout's (int)");
     private EditorGUILayoutArrays.ArrayFieldSettings AFS_jeLayoutScenesAlwaysTablet = new EditorGUILayoutArrays.ArrayFieldSettings("  |    |  Scenes, always Tablet");
     private EditorGUILayoutArrays.ArrayFieldSettings AFS_jeLayoutScenesAlwaysClassic = new EditorGUILayoutArrays.ArrayFieldSettings("  |    |  Scenes, always Classic");
+
+    //  a
+    private EditorGUILayoutArrays.ArrayFieldSettings AFS_aAnimIfPrefsType = new EditorGUILayoutArrays.ArrayFieldSettings("  |    |  Prefs value type (for example: int)");
+    private EditorGUILayoutArrays.ArrayFieldSettings AFS_aAnimIfPrefsName = new EditorGUILayoutArrays.ArrayFieldSettings("  |    |   Prefs name (for excample: importantInt)");
+    private EditorGUILayoutArrays.ArrayFieldSettings AFS_aAnimIfPrefsValue = new EditorGUILayoutArrays.ArrayFieldSettings("  |    |  Prefs value for start anim (for excample: 0)");
+    private EditorGUILayoutArrays.ArrayFieldSettings AFS_aAnimIfPrefsAnim = new EditorGUILayoutArrays.ArrayFieldSettings("  |    |  If prefs play anim (for excample: Join)");
 
     public override void OnInspectorGUI()
     {
@@ -605,10 +805,10 @@ public class CustomGUIEditor : Editor
             _target.mmAVNMinWait = EditorGUILayout.TextField("  |  Min standby mode: ", _target.mmAVNMinWait);
             _target.mmAVNGoInvisible = EditorGUILayout.TextField("  |  Go Invisible: ", _target.mmAVNGoInvisible);
             _target.mmAVNGoVisible = EditorGUILayout.TextField("  |  Go Visible: ", _target.mmAVNGoVisible);
-            EditorGUILayout.HelpBox(" |   Pref's for start animation: ", MessageType.None);
-            _target.mmPrefs = EditorGUILayout.TextField("  |  Pref: ", _target.mmPrefs);
-            _target.mmPrefsToMaxValue = EditorGUILayout.TextField("  |  Value to Max: ", _target.mmPrefsToMaxValue);
-            _target.mmPrefsToMinValue = EditorGUILayout.TextField("  |  Value to Min: ", _target.mmPrefsToMinValue);
+            ///EditorGUILayout.HelpBox(" |   Pref's for start animation: ", MessageType.None);
+            ///_target.mmPrefs = EditorGUILayout.TextField("  |  Pref: ", _target.mmPrefs);
+            ///_target.mmPrefsToMaxValue = EditorGUILayout.TextField("  |  Value to Max: ", _target.mmPrefsToMaxValue);
+            ///_target.mmPrefsToMinValue = EditorGUILayout.TextField("  |  Value to Min: ", _target.mmPrefsToMinValue);
             EditorGUILayout.HelpBox("\n", MessageType.None);
         }
 
@@ -625,8 +825,9 @@ public class CustomGUIEditor : Editor
             _target.jeLayoutSwitchEnabled = EditorGUILayout.Toggle("  |  Enable switch layout", _target.jeLayoutSwitchEnabled);
             if(_target.jeLayoutSwitchEnabled)
             {
-                EditorGUILayout.HelpBox(" |    |   Tablet layout restore mode:\n         -  Do Not Restore - Don't restore tablet layout.\n         -  Restore From Reg - Restore tablet layout from preferences.\n         -  Restore From Previous Scene - This script checks previous\n             scene, if tablet layout in previous scene is active,\n             it's aply also for this scene.", MessageType.None);
+                EditorGUILayout.HelpBox(" |    |   Tablet layout restore mode:\n         -  Do Not Restore - Don't restore tablet layout.\n         -  Restore From Reg - Restore tablet layout from preferences.\n         -  Restore From Previous Scene Name - Restore tablet layout from previous scene name.\n         -  Restore From Next Scene Name - control exit anim from next scene name.\n         -  Restore From Previous Scene - This script checks previous\n             scene, if tablet layout in previous scene is active,\n             it's aply also for this scene. (Coming soon)\n         -  Restore From Next Scene - This script checks next\n             scene, if tablet layout in next and this scene\n              is active exit anim not use. (Coming soon)", MessageType.None);
                 EO_jeTabletRestore = (QuickAnim.EO_jeTabletRestore)EditorGUILayout.EnumPopup("  |    |  Tablet layout restore:", EO_jeTabletRestore);
+                EO_jeTabletWxit = (QuickAnim.EO_jeTabletExit)EditorGUILayout.EnumPopup("  |    |  Next scene layout:", EO_jeTabletExit);
                 EO_jeThisObjectLayout = (QuickAnim.EO_jeThisObjectLayout)EditorGUILayout.EnumPopup("  |    |  This object layout:", EO_jeThisObjectLayout);
                 EditorGUILayout.HelpBox(" |    |   Layout Change - Enable switch layout", MessageType.None);
                 _target.jeLayoutChange = EditorGUILayout.Toggle("  |    |  Layout change", _target.jeLayoutChange);
@@ -635,20 +836,12 @@ public class CustomGUIEditor : Editor
                    _target.jeLayoutChangeBindButtonsToTablet = EditorGUILayoutArrays.GameObjectArrayField(AFS_jeLayoutChangeBindButtonsToTablet, _target.jeLayoutChangeBindButtonsToTablet,"               -  Size", "               -  GameObject"); 
                    _target.jeLayoutChangeBindButtonsToClassic = EditorGUILayoutArrays.GameObjectArrayField(AFS_jeLayoutChangeBindButtonsToClassic, _target.jeLayoutChangeBindButtonsToClassic,"               -  Size", "               -  GameObject"); 
                 }
-                EditorGUILayout.HelpBox(" |    |   Another GameObject's switch layout.\n         -  Array 0 - Array with another GameObject layout switch.\n         -  Array 1 - Array with layout number's another GameObjects.\n             -  0 - Classic.\n             -  1 - Tablet.", MessageType.None);
-                _target.jeLayoutSwitchAnotherObjects = EditorGUILayoutArrays.GameObjectArrayField(AFS_jeLayoutSwitchAnotherObjects, _target.jeLayoutSwitchAnotherObjects, "           -  Size", "           -  GameObject");
-                _target.jeLayoutSwitchAnotherObjectsLayout = EditorGUILayoutArrays.IntArrayField(AFS_jeLayoutSwitchAnotherObjectsLayout, _target.jeLayoutSwitchAnotherObjectsLayout, "           -  Size", "           -  GameObject");
+                ///EditorGUILayout.HelpBox(" |    |   Another GameObject's switch layout.\n         -  Array 0 - Array with another GameObject layout switch.\n         -  Array 1 - Array with layout number's another GameObjects.\n             -  0 - Classic.\n             -  1 - Tablet.", MessageType.None);
+                ///_target.jeLayoutSwitchAnotherObjects = EditorGUILayoutArrays.GameObjectArrayField(AFS_jeLayoutSwitchAnotherObjects, _target.jeLayoutSwitchAnotherObjects, "           -  Size", "           -  GameObject");
+                ///_target.jeLayoutSwitchAnotherObjectsLayout = EditorGUILayoutArrays.IntArrayField(AFS_jeLayoutSwitchAnotherObjectsLayout, _target.jeLayoutSwitchAnotherObjectsLayout, "           -  Size", "           -  GameObject");
                 EditorGUILayout.HelpBox(" |    |   Write down always tablet or classic layout scenes here (string).", MessageType.None);
                 _target.jeLayoutScenesAlwaysTablet = EditorGUILayoutArrays.StringArrayField(AFS_jeLayoutScenesAlwaysTablet, _target.jeLayoutScenesAlwaysTablet, "           -  Size", "           -  Scene");
                 _target.jeLayoutScenesAlwaysClassic = EditorGUILayoutArrays.StringArrayField(AFS_jeLayoutScenesAlwaysClassic, _target.jeLayoutScenesAlwaysClassic, "           -  Size", "           -  Scene");
-            }
-            EditorGUILayout.HelpBox(" |   Anim if pref's - Play animation if \n |   value in preference == value in this array's.", MessageType.None);
-            _target.jeAnimIfPrefs = EditorGUILayout. Toggle("  |  Play anim's if pref", _target.jeAnimIfPrefs);
-            if(_target.jeAnimIfPrefs)
-            {
-                _target.jeAnimIfPrefsType = EditorGUILayoutArrays.StringArrayField(AFS_jsAnimIfPrefsType, _target.jeAnimIfPrefsType, "           -  Size", "           -  Value type");
-                _target.jeAnimIfPrefsName = EditorGUILayoutArrays.StringArrayField(AFS_jsAnimIfPrefsName, _target.jeAnimIfPrefsName, "           -  Size", "           -  Pref name");
-                _target.jeAnimIfPrefsValue = EditorGUILayoutArrays.StringArrayField(AFS_jsAnimIfPrefsValue, _target.jeAnimIfPrefsValue, "           -  Size", "           -  Value for start anim");
             }
             EditorGUILayout.HelpBox(" |   Wait before Join / Exit, seconds (float). Default: 0.0f", MessageType.None);
             _target.jeWaitBeforeJoin = EditorGUILayout.Toggle("  |  Wait before Join", _target.jeWaitBeforeJoin);
@@ -672,6 +865,15 @@ public class CustomGUIEditor : Editor
         }
 
         //  a
+        EditorGUILayout.HelpBox(" |   Anim if pref's - Play animation if \n |   value in preference == value in this array's.\n |   Available anims:\n       -  Join\n       -  Exit\n       -  Min\n       -  Max", MessageType.None);
+        _target.aAnimIfPrefs = EditorGUILayout. Toggle("  |  Play anim's if pref", _target.jeAnimIfPrefs);
+        if(_target.aAnimIfPrefs)
+        {
+            _target.aAnimIfPrefsType = EditorGUILayoutArrays.StringArrayField(AFS_aAnimIfPrefsType, _target.aAnimIfPrefsType, "           -  Size", "           -  Value type");
+            _target.aAnimIfPrefsName = EditorGUILayoutArrays.StringArrayField(AFS_aAnimIfPrefsName, _target.aAnimIfPrefsName, "           -  Size", "           -  Pref name");
+            _target.aAnimIfPrefsValue = EditorGUILayoutArrays.StringArrayField(AFS_aAnimIfPrefsValue, _target.aAnimIfPrefsValue, "           -  Size", "           -  Value for start anim");
+            _target.aAnimIfPrefsAnim = EditorGUILayoutArrays.StringArrayField(AFS_aAnimIfPrefsAnim, _target.aAnimIfPrefsAnim, "           -  Size", "           -  Anim");
+        }
         EditorGUILayout.HelpBox(" |   Anim Value Name's: ", MessageType.None);
         _target.aAVNInvisible = EditorGUILayout.TextField("Invisible: ", _target.aAVNInvisible);
         _target.aAVNVisible = EditorGUILayout.TextField("Visible: ", _target.aAVNVisible);
@@ -682,7 +884,8 @@ public class CustomGUIEditor : Editor
     public void enumReturnString()
     {
         if (EO_mmSpawnUseJEMM == QuickAnim.EO_mmSpawnUseJEMM.Max) { _target.mmSpawnUseJEMM = "Max"; } else if (EO_mmSpawnUseJEMM == QuickAnim.EO_mmSpawnUseJEMM.Min) { _target.mmSpawnUseJEMM = "Min"; }
-        if (EO_jeTabletRestore == QuickAnim.EO_jeTabletRestore.DoNotRestore) { _target.jeTabletRestore = "DoNotRestore"; } else if (EO_jeTabletRestore == QuickAnim.EO_jeTabletRestore.RestoreFromReg) { _target.jeTabletRestore = "RestoreFromReg"; } else if (EO_jeTabletRestore == QuickAnim.EO_jeTabletRestore.RestoreFromPreviousScene) { _target.jeTabletRestore = "RestoreFromPreviousScene"; }
+        if (EO_jeTabletRestore == QuickAnim.EO_jeTabletRestore.DoNotRestore) { _target.jeTabletRestore = "DoNotRestore"; } else if (EO_jeTabletRestore == QuickAnim.EO_jeTabletRestore.RestoreFromReg) { _target.jeTabletRestore = "RestoreFromReg"; } else if (EO_jeTabletRestore == QuickAnim.EO_jeTabletRestore.RestoreFromPreviousSceneName) { _target.jeTabletRestore = "RestoreFromPreviousSceneName"; }
+        if (EO_jeTabletExit == QuickAnim.EO_jeTabletExit.DoNotRestore) { _target.jeTabletExit = "DoNotRestore"; } else if (EO_jeTabletExit == QuickAnim.EO_jeTabletExit.RestoreFromReg) { _target.jeTabletExit = "RestoreFromReg"; } else if (EO_jeTabletExit == QuickAnim.EO_jeTabletExit.RestoreFromNextSceneName) { _target.jeTabletExit = "RestoreFromNextSceneName"; }
         if (EO_jeThisObjectLayout == QuickAnim.EO_jeThisObjectLayout.Classic) { _target.jeThisObjectLayout = "Classic"; } else if (EO_jeThisObjectLayout == QuickAnim.EO_jeThisObjectLayout.Tablet) { _target.jeThisObjectLayout = "Tablet"; }
     }
 }
