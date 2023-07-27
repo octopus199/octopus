@@ -1002,13 +1002,44 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75c613268fb3f13459b211326697e372, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minOrMax: 1
+  mmIsActive: 1
+  mmUseMax: 1
+  mmUseMin: 1
   mmSpawnMin: 0
   mmBindButtons: []
-  mmBindButtonsInverse: 
+  mmBindButtonsInvert: 
   mmAnotherObj: []
   mmInvisibleOnMax: []
   mmInvisibleOnMin: []
+  mmActiveOnMax: []
+  mmActiveOnMin: []
+  mmAVNToMax: 
+  mmAVNToMin: 
+  jeIsActive: 1
+  jeUseJoin: 1
+  jeUseExit: 1
+  jeTurnOffAnimatorAfterJoin: 0
+  jeLayoutSwitchEnabled: 1
+  jeTabletRestore: DoNotRestore
+  jeThisObjectLayout: 
+  jeLayoutChange: 1
+  jeLayoutChangeBindButtonsToTablet:
+  - {fileID: 0}
+  jeLayoutChangeBindButtonsToClassic: []
+  jeLayoutSwitchAnotherObjects: []
+  jeLayoutSwitchAnotherObjectsLayout: 
+  jeLayoutScenesAlwaysTablet: []
+  jeLayoutScenesAlwaysClassic: []
+  jeAnimIfPrefs: 1
+  jeAnimIfPrefsType: []
+  jeAnimIfPrefsName: []
+  jeAnimIfPrefsValue: []
+  jeWaitBeforeJoin: 1
+  jeWaitBeforeExit: 1
+  jeWaitBeforeJoinSeconds: 0.27
+  jeWaitBeforeExitSeconds: 0.27
+  jeAVNJoin: 
+  jeAVNExit: 
 --- !u!1 &367091574
 GameObject:
   m_ObjectHideFlags: 0

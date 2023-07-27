@@ -63,8 +63,10 @@ public class QuickAnim : MonoBehaviour
     public string[] jeAnimIfPrefsValue;
     public bool jeWaitBeforeJoin;
     public bool jeWaitBeforeExit;
-    public float jeWaitBeforeJoinSeconds = 0.27f;
-    public float jeWaitBeforeExitSeconds = 0.27f;
+    public float jeWaitBeforeJoinSeconds = 0.0f;
+    public float jeWaitBeforeExitSeconds = 0.0f;
+    public float jeDurationJoinSeconds = 0.2f;
+    public float jeDurationExitSeconds = 0.2f;
     public string jeAVNJoin;
     public string jeAVNExit;
     public enum EO_jeTabletRestore
@@ -116,26 +118,26 @@ public class QuickAnim : MonoBehaviour
 
                     for (int i = 0; i != mmAnotherObj.Length; i++)
                     {
-                        mmAnotherObj[i].GetComponent<Animator>().SetBool(mmAVNToMax, true);
+                        ((GameObject) mmAnotherObj[i]).GetComponent<Animator>().SetBool(mmAVNToMax, true);
                     }
                     for (int i = 0; i != mmInvisibleOnMax.Length; i++)
                     {
-                        mmInvisibleOnMax[i].GetComponent<Animator>().SetBool(mmAVNGoInvisible, true);
+                        ((GameObject) mmInvisibleOnMax[i]).GetComponent<Animator>().SetBool(mmAVNGoInvisible, true);
                     }
                     for (int i = 0; i != mmInvisibleOnMin.Length; i++)
                     {
-                        mmInvisibleOnMin[i].GetComponent<Animator>().SetBool(mmAVNGoVisible true);
+                        ((GameObject) mmInvisibleOnMin[i]).GetComponent<Animator>().SetBool(mmAVNGoVisible, true);
                     }
                     for (int i = 0; i != mmActiveOnMax.Length; i++)
                     {
-                        mmActiveOnMax[i].SetActive(true);
+                        ((GameObject) mmActiveOnMax[i]).SetActive(true);
                     }
                     for (int i = 0; i != mmActiveOnMin.Length; i++)
                     {
-                        mmActiveOnMin[i].SetActive(false);
+                        ((GameObject) mmActiveOnMin[i]).SetActive(false);
                     }
 
-                    yield return new WaiitForSeconds(0.2f);
+                    yield return new WaitForSeconds(0.2f);
                     GetComponent<Animator>().SetBool(mmAVNToMax, false);
                     GetComponent<Animator>().SetBool(jeAVNJoin, false);
                     if (!mmSpawnMin & !mmSpawnUseJE)
@@ -143,23 +145,23 @@ public class QuickAnim : MonoBehaviour
                         GetComponent<Animator>().SetBool(mmAVNMaxWait, true);
                     } else
                     {
-                        GetComponent<Animator>().SetBool(aAVMVisible, true);
+                        GetComponent<Animator>().SetBool(aAVNVisible, true);
                     }
 
                     for (int i = 0; i != mmAnotherObj.Length; i++)
                     {
-                        mmAnotherObj[i].GetComponent<Animator>().SetBool(mmAVNToMax, false);
-                        mmAnotherObj[i].GetComponent<Animator>().SetBool(mmAVNMaxWait, true);
+                        ((GameObject) mmAnotherObj[i]).GetComponent<Animator>().SetBool(mmAVNToMax, false);
+                        ((GameObject) mmAnotherObj[i]).GetComponent<Animator>().SetBool(mmAVNMaxWait, true);
                     }
                     for (int i = 0; i != mmInvisibleOnMax.Length; i++)
                     {
-                        mmInvisibleOnMax[i].GetComponent<Animator>().SetBool(aAVNInvisible, true);
-                        mmInvisibleOnMax[i].GetComponent<Animator>().SetBool(mmAVNGoInvisible false);
+                        ((GameObject) mmInvisibleOnMax[i]).GetComponent<Animator>().SetBool(aAVNInvisible, true);
+                        ((GameObject) mmInvisibleOnMax[i]).GetComponent<Animator>().SetBool(mmAVNGoInvisible, false);
                     }
                     for (int i = 0; i != mmInvisibleOnMin.Length; i++)
                     {
-                        mmInvisibleOnMin[i].GetComponent<Animator>().SetBool(aAVNVisible, true);
-                        mmInvisibleOnMin[i].GetComponent<Animator>().SetBool(mmAVNGoVisible false);
+                        ((GameObject) mmInvisibleOnMin[i]).GetComponent<Animator>().SetBool(aAVNVisible, true);
+                        ((GameObject) mmInvisibleOnMin[i]).GetComponent<Animator>().SetBool(mmAVNGoVisible, false);
                     }
                 }
                 //Spawn min
@@ -176,26 +178,26 @@ public class QuickAnim : MonoBehaviour
 
                     for (int i = 0; i != mmAnotherObj.Length; i++)
                     {
-                        mmAnotherObj[i].GetComponent<Animator>().SetBool(mmAVNToMax, true);
+                        ((GameObject) mmAnotherObj[i]).GetComponent<Animator>().SetBool(mmAVNToMax, true);
                     }
                     for (int i = 0; i != mmInvisibleOnMax.Length; i++)
                     {
-                        mmInvisibleOnMax[i].GetComponent<Animator>().SetBool(mmAVNGoInvisible, true);
+                        ((GameObject) mmInvisibleOnMax[i]).GetComponent<Animator>().SetBool(mmAVNGoInvisible, true);
                     }
                     for (int i = 0; i != mmInvisibleOnMin.Length; i++)
                     {
-                        mmInvisibleOnMin[i].GetComponent<Animator>().SetBool(mmAVNGoVisible true);
+                        ((GameObject) mmInvisibleOnMin[i]).GetComponent<Animator>().SetBool(mmAVNGoVisible, true);
                     }
                     for (int i = 0; i != mmActiveOnMax.Length; i++)
                     {
-                        mmActiveOnMax[i].SetActive(true);
+                        ((GameObject) mmActiveOnMax[i]).SetActive(true);
                     }
                     for (int i = 0; i != mmActiveOnMin.Length; i++)
                     {
-                        mmActiveOnMin[i].SetActive(false);
+                        ((GameObject) mmActiveOnMin[i]).SetActive(false);
                     }
 
-                    yield return new WaiitForSeconds(0.2f);
+                    yield return new WaitForSeconds(0.2f);
                     GetComponent<Animator>().SetBool(mmAVNToMax, false);
                     GetComponent<Animator>().SetBool(jeAVNJoin, false);
                     if (!mmSpawnMin & !mmSpawnUseJE)
@@ -204,23 +206,23 @@ public class QuickAnim : MonoBehaviour
                     }
                     else
                     {
-                        GetComponent<Animator>().SetBool(aAVMVisible, true);
+                        GetComponent<Animator>().SetBool(aAVNVisible, true);
                     }
 
                     for (int i = 0; i != mmAnotherObj.Length; i++)
                     {
-                        mmAnotherObj[i].GetComponent<Animator>().SetBool(mmAVNToMax, false);
-                        mmAnotherObj[i].GetComponent<Animator>().SetBool(mmAVNMaxWait, true);
+                        ((GameObject) mmAnotherObj[i]).GetComponent<Animator>().SetBool(mmAVNToMax, false);
+                        ((GameObject) mmAnotherObj[i]).GetComponent<Animator>().SetBool(mmAVNMaxWait, true);
                     }
                     for (int i = 0; i != mmInvisibleOnMax.Length; i++)
                     {
-                        mmInvisibleOnMax[i].GetComponent<Animator>().SetBool(aAVNInvisible, true);
-                        mmInvisibleOnMax[i].GetComponent<Animator>().SetBool(mmAVNGoInvisible false);
+                        ((GameObject) mmInvisibleOnMax[i]).GetComponent<Animator>().SetBool(aAVNInvisible, true);
+                        ((GameObject) mmInvisibleOnMax[i]).GetComponent<Animator>().SetBool(mmAVNGoInvisible, false);
                     }
                     for (int i = 0; i != mmInvisibleOnMin.Length; i++)
                     {
-                        mmInvisibleOnMin[i].GetComponent<Animator>().SetBool(aAVNVisible, true);
-                        mmInvisibleOnMin[i].GetComponent<Animator>().SetBool(mmAVNGoVisible false);
+                        ((GameObject) mmInvisibleOnMin[i]).GetComponent<Animator>().SetBool(aAVNVisible, true);
+                        ((GameObject) mmInvisibleOnMin[i]).GetComponent<Animator>().SetBool(mmAVNGoVisible, false);
                     }
                 }
             }
@@ -232,15 +234,15 @@ public class QuickAnim : MonoBehaviour
                 {
                     for (int i = 0; i != mmInvisibleOnMax.Length; i++)
                     {
-                        mmInvisibleOnMax[i].GetComponent<Animator>().SetBool(aAVNInvisible, true);
+                        ((GameObject) mmInvisibleOnMax[i]).GetComponent<Animator>().SetBool(aAVNInvisible, true);
                     }
                     for (int i = 0; i != mmActiveOnMax.Length; i++)
                     {
-                        mmActiveOnMax[i].SetActive(true);
+                        ((GameObject) mmActiveOnMax[i]).SetActive(true);
                     }
                     for (int i = 0; i != mmActiveOnMin.Length; i++)
                     {
-                        mmActiveOnMin[i].SetActive(false);
+                        ((GameObject)mmActiveOnMin[i]).SetActive(false);
                     }
 
                     if (!mmSpawnMin & !mmSpawnUseJE)
@@ -249,16 +251,16 @@ public class QuickAnim : MonoBehaviour
                     }
                     else
                     {
-                        GetComponent<Animator>().SetBool(aAVMVisible, true);
+                        GetComponent<Animator>().SetBool(aAVNVisible, true);
                     }
 
                     for (int i = 0; i != mmAnotherObj.Length; i++)
                     {
-                        mmAnotherObj[i].GetComponent<Animator>().SetBool(mmAVNMaxWait, true);
+                        ((GameObject) mmAnotherObj[i]).GetComponent<Animator>().SetBool(mmAVNMaxWait, true);
                     }
                     for (int i = 0; i != mmInvisibleOnMin.Length; i++)
                     {
-                        mmInvisibleOnMin[i].GetComponent<Animator>().SetBool(aAVNVisible, true);
+                        ((GameObject) mmInvisibleOnMin[i]).GetComponent<Animator>().SetBool(aAVNVisible, true);
                     }
                 }
                 //Spawn min
@@ -266,15 +268,15 @@ public class QuickAnim : MonoBehaviour
                 {
                     for (int i = 0; i != mmInvisibleOnMax.Length; i++)
                     {
-                        mmInvisibleOnMax[i].GetComponent<Animator>().SetBool(aAVNInvisible, true);
+                        ((GameObject) mmInvisibleOnMax[i]).GetComponent<Animator>().SetBool(aAVNInvisible, true);
                     }
                     for (int i = 0; i != mmActiveOnMax.Length; i++)
                     {
-                        mmActiveOnMax[i].SetActive(true);
+                        ((GameObject) mmActiveOnMax[i]).SetActive(true);
                     }
                     for (int i = 0; i != mmActiveOnMin.Length; i++)
                     {
-                        mmActiveOnMin[i].SetActive(false);
+                        ((GameObject) mmActiveOnMin[i]).SetActive(false);
                     }
 
                     if (mmSpawnMin & !mmSpawnUseJE)
@@ -283,16 +285,16 @@ public class QuickAnim : MonoBehaviour
                     }
                     else
                     {
-                        GetComponent<Animator>().SetBool(aAVMVisible, true);
+                        GetComponent<Animator>().SetBool(aAVNVisible, true);
                     }
 
                     for (int i = 0; i != mmAnotherObj.Length; i++)
                     {
-                        mmAnotherObj[i].GetComponent<Animator>().SetBool(mmAVNMaxWait, true);
+                        ((GameObject) mmAnotherObj[i]).GetComponent<Animator>().SetBool(mmAVNMaxWait, true);
                     }
                     for (int i = 0; i != mmInvisibleOnMin.Length; i++)
                     {
-                        mmInvisibleOnMin[i].GetComponent<Animator>().SetBool(aAVNVisible, true);
+                        ((GameObject) mmInvisibleOnMin[i]).GetComponent<Animator>().SetBool(aAVNVisible, true);
                     }
                 }
             }
@@ -313,48 +315,48 @@ public class QuickAnim : MonoBehaviour
 
                     for (int i = 0; i != mmAnotherObj.Length; i++)
                     {
-                        mmAnotherObj[i].GetComponent<Animator>().SetBool(mmAVNminWait, false);
-                        mmAnotherObj[i].GetComponent<Animator>().SetBool(aAVNVisible, false);
-                        mmAnotherObj[i].GetComponent<Animator>().SetBool(aAVNInvisible, false);
-                        mmAnotherObj[i].GetComponent<Animator>().SetBool(mmAVNToMax, true);
+                        ((GameObject) mmAnotherObj[i]).GetComponent<Animator>().SetBool(mmAVNMinWait, false);
+                        ((GameObject) mmAnotherObj[i]).GetComponent<Animator>().SetBool(aAVNVisible, false);
+                        ((GameObject) mmAnotherObj[i]).GetComponent<Animator>().SetBool(aAVNInvisible, false);
+                        ((GameObject) mmAnotherObj[i]).GetComponent<Animator>().SetBool(mmAVNToMax, true);
                     }
                     for (int i = 0; i != mmInvisibleOnMax.Length; i++)
                     {
-                        mmInvisibleOnMax[i].GetComponent<Animator>().SetBool(aAVNVisible, false);
-                        mmInvisibleOnMax[i].GetComponent<Animator>().SetBool(mmAVNGoInvisible true);
+                        ((GameObject) mmInvisibleOnMax[i]).GetComponent<Animator>().SetBool(aAVNVisible, false);
+                        ((GameObject) mmInvisibleOnMax[i]).GetComponent<Animator>().SetBool(mmAVNGoInvisible, true);
                     }
                     for (int i = 0; i != mmInvisibleOnMin.Length; i++)
                     {
-                        mmInvisibleOnMin[i].GetComponent<Animator>().SetBool(aAVNInvisible, false);
-                        mmInvisibleOnMin[i].GetComponent<Animator>().SetBool(mmAVNGoVisible true);
+                        ((GameObject) mmInvisibleOnMin[i]).GetComponent<Animator>().SetBool(aAVNInvisible, false);
+                        ((GameObject) mmInvisibleOnMin[i]).GetComponent<Animator>().SetBool(mmAVNGoVisible, true);
                     }
                     for (int i = 0; i != mmActiveOnMax.Length; i++)
                     {
-                        mmActiveOnMax[i].SetActive(true);
+                        ((GameObject) mmActiveOnMax[i]).SetActive(true);
                     }
                     for (int i = 0; i != mmActiveOnMin.Length; i++)
                     {
-                        mmActiveOnMin[i].SetActive(false);
+                        ((GameObject) mmActiveOnMin[i]).SetActive(false);
                     }
 
-                    yield return new WaiitForSeconds(0.2f);
+                    yield return new WaitForSeconds(0.2f);
                     GetComponent<Animator>().SetBool(mmAVNToMax, false);
                     GetComponent<Animator>().SetBool(mmAVNMaxWait, true);
 
                     for (int i = 0; i != mmAnotherObj.Length; i++)
                     {
-                        mmAnotherObj[i].GetComponent<Animator>().SetBool(mmAVNToMax, false);
-                        mmAnotherObj[i].GetComponent<Animator>().SetBool(mmAVNMaxWait, true);
+                        ((GameObject) mmAnotherObj[i]).GetComponent<Animator>().SetBool(mmAVNToMax, false);
+                        ((GameObject) mmAnotherObj[i]).GetComponent<Animator>().SetBool(mmAVNMaxWait, true);
                     }
                     for (int i = 0; i != mmInvisibleOnMax.Length; i++)
                     {
-                        mmInvisibleOnMax[i].GetComponent<Animator>().SetBool(aAVNInvisible, true);
-                        mmInvisibleOnMax[i].GetComponent<Animator>().SetBool(mmAVNGoInvisible false);
+                        ((GameObject) mmInvisibleOnMax[i]).GetComponent<Animator>().SetBool(aAVNInvisible, true);
+                        ((GameObject) mmInvisibleOnMax[i]).GetComponent<Animator>().SetBool(mmAVNGoInvisible, false);
                     }
                     for (int i = 0; i != mmInvisibleOnMin.Length; i++)
                     {
-                        mmInvisibleOnMin[i].GetComponent<Animator>().SetBool(aAVNVisible, true);
-                        mmInvisibleOnMin[i].GetComponent<Animator>().SetBool(mmAVNGoVisible false);
+                        ((GameObject) mmInvisibleOnMin[i]).GetComponent<Animator>().SetBool(aAVNVisible, true);
+                        ((GameObject) mmInvisibleOnMin[i]).GetComponent<Animator>().SetBool(mmAVNGoVisible, false);
                     }
                 }
                 //Spawn min
@@ -367,48 +369,48 @@ public class QuickAnim : MonoBehaviour
 
                     for (int i = 0; i != mmAnotherObj.Length; i++)
                     {
-                        mmAnotherObj[i].GetComponent<Animator>().SetBool(mmAVNMaxWait, false);
-                        mmAnotherObj[i].GetComponent<Animator>().SetBool(aAVNVisible, false);
-                        mmAnotherObj[i].GetComponent<Animator>().SetBool(aAVNInvisible, false);
-                        mmAnotherObj[i].GetComponent<Animator>().SetBool(mmAVNToMin, true);
+                        ((GameObject) mmAnotherObj[i]).GetComponent<Animator>().SetBool(mmAVNMaxWait, false);
+                        ((GameObject) mmAnotherObj[i]).GetComponent<Animator>().SetBool(aAVNVisible, false);
+                        ((GameObject) mmAnotherObj[i]).GetComponent<Animator>().SetBool(aAVNInvisible, false);
+                        ((GameObject) mmAnotherObj[i]).GetComponent<Animator>().SetBool(mmAVNToMin, true);
                     }
                     for (int i = 0; i != mmInvisibleOnMin.Length; i++)
                     {
-                        mmInvisibleOnMax[i].GetComponent<Animator>().SetBool(aAVNVisible, false);
-                        mmInvisibleOnMax[i].GetComponent<Animator>().SetBool(mmAVNGoInvisible true);
+                        ((GameObject) mmInvisibleOnMax[i]).GetComponent<Animator>().SetBool(aAVNVisible, false);
+                        ((GameObject) mmInvisibleOnMax[i]).GetComponent<Animator>().SetBool(mmAVNGoInvisible, true);
                     }
                     for (int i = 0; i != mmInvisibleOnMax.Length; i++)
                     {
-                        mmInvisibleOnMin[i].GetComponent<Animator>().SetBool(aAVNInvisible, false);
-                        mmInvisibleOnMin[i].GetComponent<Animator>().SetBool(mmAVNGoVisible true);
+                        ((GameObject) mmInvisibleOnMin[i]).GetComponent<Animator>().SetBool(aAVNInvisible, false);
+                        ((GameObject) mmInvisibleOnMin[i]).GetComponent<Animator>().SetBool(mmAVNGoVisible, true);
                     }
                     for (int i = 0; i != mmActiveOnMin.Length; i++)
                     {
-                        mmActiveOnMax[i].SetActive(true);
+                        ((GameObject) mmActiveOnMax[i]).SetActive(true);
                     }
                     for (int i = 0; i != mmActiveOnMax.Length; i++)
                     {
-                        mmActiveOnMin[i].SetActive(false);
+                        ((GameObject) mmActiveOnMin[i]).SetActive(false);
                     }
 
-                    yield return new WaiitForSeconds(0.2f);
+                    yield return new WaitForSeconds(0.2f);
                     GetComponent<Animator>().SetBool(mmAVNToMin, false);
                     GetComponent<Animator>().SetBool(mmAVNMinWait, true);
 
                     for (int i = 0; i != mmAnotherObj.Length; i++)
                     {
-                        mmAnotherObj[i].GetComponent<Animator>().SetBool(mmAVNToMin, false);
-                        mmAnotherObj[i].GetComponent<Animator>().SetBool(mmAVNMinWait, true);
+                        ((GameObject) mmAnotherObj[i]).GetComponent<Animator>().SetBool(mmAVNToMin, false);
+                        ((GameObject) mmAnotherObj[i]).GetComponent<Animator>().SetBool(mmAVNMinWait, true);
                     }
                     for (int i = 0; i != mmInvisibleOnMin.Length; i++)
                     {
-                        mmInvisibleOnMax[i].GetComponent<Animator>().SetBool(aAVNInvisible, true);
-                        mmInvisibleOnMax[i].GetComponent<Animator>().SetBool(mmAVNGoInvisible false);
+                        ((GameObject) mmInvisibleOnMax[i]).GetComponent<Animator>().SetBool(aAVNInvisible, true);
+                        ((GameObject) mmInvisibleOnMax[i]).GetComponent<Animator>().SetBool(mmAVNGoInvisible, false);
                     }
                     for (int i = 0; i != mmInvisibleOnMax.Length; i++)
                     {
-                        mmInvisibleOnMin[i].GetComponent<Animator>().SetBool(aAVNVisible, true);
-                        mmInvisibleOnMin[i].GetComponent<Animator>().SetBool(mmAVNGoVisible false);
+                        ((GameObject) mmInvisibleOnMin[i]).GetComponent<Animator>().SetBool(aAVNVisible, true);
+                        ((GameObject) mmInvisibleOnMin[i]).GetComponent<Animator>().SetBool(mmAVNGoVisible, false);
                     }
                 }
             }
@@ -425,28 +427,28 @@ public class QuickAnim : MonoBehaviour
 
                     for (int i = 0; i != mmAnotherObj.Length; i++)
                     {
-                        mmAnotherObj[i].GetComponent<Animator>().SetBool(mmAVNminWait, false);
-                        mmAnotherObj[i].GetComponent<Animator>().SetBool(aAVNVisible, false);
-                        mmAnotherObj[i].GetComponent<Animator>().SetBool(aAVNInvisible, false);
-                        mmAnotherObj[i].GetComponent<Animator>().SetBool(mmAVNMaxWait, true);
+                        ((GameObject) mmAnotherObj[i]).GetComponent<Animator>().SetBool(mmAVNMinWait, false);
+                        ((GameObject) mmAnotherObj[i]).GetComponent<Animator>().SetBool(aAVNVisible, false);
+                        ((GameObject) mmAnotherObj[i]).GetComponent<Animator>().SetBool(aAVNInvisible, false);
+                        ((GameObject) mmAnotherObj[i]).GetComponent<Animator>().SetBool(mmAVNMaxWait, true);
                     }
                     for (int i = 0; i != mmInvisibleOnMax.Length; i++)
                     {
-                        mmInvisibleOnMax[i].GetComponent<Animator>().SetBool(aAVNVisible, false);
-                        mmInvisibleOnMax[i].GetComponent<Animator>().SetBool(aAVNInvisible, true);
+                        ((GameObject) mmInvisibleOnMax[i]).GetComponent<Animator>().SetBool(aAVNVisible, false);
+                        ((GameObject) mmInvisibleOnMax[i]).GetComponent<Animator>().SetBool(aAVNInvisible, true);
                     }
                     for (int i = 0; i != mmInvisibleOnMin.Length; i++)
                     {
-                        mmInvisibleOnMin[i].GetComponent<Animator>().SetBool(aAVNInvisible, false);
-                        mmInvisibleOnMin[i].GetComponent<Animator>().SetBool(aAVNVisible, true);
+                        ((GameObject) mmInvisibleOnMin[i]).GetComponent<Animator>().SetBool(aAVNInvisible, false);
+                        ((GameObject) mmInvisibleOnMin[i]).GetComponent<Animator>().SetBool(aAVNVisible, true);
                     }
                     for (int i = 0; i != mmActiveOnMax.Length; i++)
                     {
-                        mmActiveOnMax[i].SetActive(true);
+                        ((GameObject) mmActiveOnMax[i]).SetActive(true);
                     }
                     for (int i = 0; i != mmActiveOnMin.Length; i++)
                     {
-                        mmActiveOnMin[i].SetActive(false);
+                        ((GameObject) mmActiveOnMin[i]).SetActive(false);
                     }
                 }
                 //Spawn min
@@ -459,29 +461,66 @@ public class QuickAnim : MonoBehaviour
 
                     for (int i = 0; i != mmAnotherObj.Length; i++)
                     {
-                        mmAnotherObj[i].GetComponent<Animator>().SetBool(mmAVNMaxWait, false);
-                        mmAnotherObj[i].GetComponent<Animator>().SetBool(aAVNVisible, false);
-                        mmAnotherObj[i].GetComponent<Animator>().SetBool(aAVNInvisible, false);
-                        mmAnotherObj[i].GetComponent<Animator>().SetBool(mmAVNMinWait, true);
+                        ((GameObject) mmAnotherObj[i]).GetComponent<Animator>().SetBool(mmAVNMaxWait, false);
+                        ((GameObject) mmAnotherObj[i]).GetComponent<Animator>().SetBool(aAVNVisible, false);
+                        ((GameObject) mmAnotherObj[i]).GetComponent<Animator>().SetBool(aAVNInvisible, false);
+                        ((GameObject) mmAnotherObj[i]).GetComponent<Animator>().SetBool(mmAVNMinWait, true);
                     }
                     for (int i = 0; i != mmInvisibleOnMin.Length; i++)
                     {
-                        mmInvisibleOnMax[i].GetComponent<Animator>().SetBool(aAVNVisible, false);
-                        mmInvisibleOnMax[i].GetComponent<Animator>().SetBool(aAVNInvisible, true);
+                        ((GameObject) mmInvisibleOnMax[i]).GetComponent<Animator>().SetBool(aAVNVisible, false);
+                        ((GameObject) mmInvisibleOnMax[i]).GetComponent<Animator>().SetBool(aAVNInvisible, true);
                     }
                     for (int i = 0; i != mmInvisibleOnMax.Length; i++)
                     {
-                        mmInvisibleOnMin[i].GetComponent<Animator>().SetBool(aAVNInvisible, false);
-                        mmInvisibleOnMin[i].GetComponent<Animator>().SetBool(aAVNVisible, true);
+                        ((GameObject) mmInvisibleOnMin[i]).GetComponent<Animator>().SetBool(aAVNInvisible, false);
+                        ((GameObject) mmInvisibleOnMin[i]).GetComponent<Animator>().SetBool(aAVNVisible, true);
                     }
                     for (int i = 0; i != mmActiveOnMin.Length; i++)
                     {
-                        mmActiveOnMax[i].SetActive(true);
+                        ((GameObject) mmActiveOnMax[i]).SetActive(true);
                     }
                     for (int i = 0; i != mmActiveOnMax.Length; i++)
                     {
-                        mmActiveOnMin[i].SetActive(false);
+                        ((GameObject) mmActiveOnMin[i]).SetActive(false);
                     }
+                }
+            }
+        }
+    }
+
+    IEnumerator JE(string operation)
+    {
+        //On open scene or prefs change
+        if (operation == "Join" & jeUseJoin)
+        {
+            //if animations turned on in preferences.
+            if (PlayerPrefs.GetInt("animDistable") == 0)
+            {
+                if (mmIsActive)
+                {
+                    StartCoroutine(MM());
+                } else
+                {
+                    GetComponent<Animator>().SetBool(jeAVNJoin, true);
+                }
+                string layout;
+                //Layout restore: Classic / Tablet.
+                if (jeTabletRestore == "RestoreFromReg")
+                {
+                    layout = PlayerPrefs.GetString("scene_PreviousSceneLayout");
+                }
+                else if (jeTabletRestore == "RestoreFromPreviousScene")
+                {
+
+                }
+
+                yield return new WaitForSeconds(jeDurationJoinSeconds);
+
+                if (jeTurnOffAnimatorAfterJoin)
+                {
+                    yield return new WaitFoeSeconds(0.01f);
+                    GetComponent<Animator>().enabled("false");
                 }
             }
         }
@@ -540,7 +579,7 @@ public class CustomGUIEditor : Editor
                 EO_mmSpawnUseJEMM = (QuickAnim.EO_mmSpawnUseJEMM)EditorGUILayout.EnumPopup("  |    |  After Join layout:", EO_mmSpawnUseJEMM);
             } else 
             {
-                EditorGUILayout.HelpBox("You must enable Join and Exit, or uncheck 'Use Join for Spawn'!", MessageType.Warn);
+                EditorGUILayout.HelpBox("You must enable Join and Exit, or uncheck 'Use Join for Spawn'!", MessageType.Warning);
             }
             EditorGUILayout.HelpBox(" |   Bind Buttons ", MessageType.None);
             _target.mmBindButtons = EditorGUILayoutArrays.GameObjectArrayField(AFS_mmBindButtons, _target.mmBindButtons,"      -  Size", "      -  GameObject");
@@ -601,7 +640,7 @@ public class CustomGUIEditor : Editor
                 _target.jeAnimIfPrefsName = EditorGUILayoutArrays.StringArrayField(AFS_jsAnimIfPrefsName, _target.jeAnimIfPrefsName, "           -  Size", "           -  Pref name");
                 _target.jeAnimIfPrefsValue = EditorGUILayoutArrays.StringArrayField(AFS_jsAnimIfPrefsValue, _target.jeAnimIfPrefsValue, "           -  Size", "           -  Value for start anim");
             }
-            EditorGUILayout.HelpBox(" |   Wait before Join / Exit, seconds (float). Default: 0.27f", MessageType.None);
+            EditorGUILayout.HelpBox(" |   Wait before Join / Exit, seconds (float). Default: 0.0f", MessageType.None);
             _target.jeWaitBeforeJoin = EditorGUILayout.Toggle("  |  Wait before Join", _target.jeWaitBeforeJoin);
             if(_target.jeWaitBeforeJoin)
             {
@@ -612,6 +651,9 @@ public class CustomGUIEditor : Editor
             {
                 _target.jeWaitBeforeExitSeconds = EditorGUILayout.FloatField("  |    |  Wait Seconds (float)", _target.jeWaitBeforeExitSeconds);
             }
+            EditorGUILayout.HelpBox(" |   Duration of Join / Exit anims, seconds (float). Default: 0.2f", MessageType.None);
+            _target.jeDurationJoinSeconds = EditorGUILayout.FloatField("  |    |  Duration of Join", _target.jeDurationJoinSeconds);
+            _target.jeDurationExitSeconds = EditorGUILayout.FloatField("  |    |  Duration of Exit", _target.jeDurationExitSeconds);
             EditorGUILayout.HelpBox(" |   Anim Value Name's: ", MessageType.None);
             _target.jeAVNJoin = EditorGUILayout.TextField("  |  Join: ", _target.jeAVNJoin);
             _target.jeAVNExit = EditorGUILayout.TextField("  |  Exit: ", _target.jeAVNExit);
@@ -621,9 +663,13 @@ public class CustomGUIEditor : Editor
         EditorGUILayout.HelpBox(" |   Anim Value Name's: ", MessageType.None);
         _target.aAVNInvisible = EditorGUILayout.TextField("Invisible: ", _target.aAVNInvisible);
         _target.aAVNVisible = EditorGUILayout.TextField("Visible: ", _target.aAVNVisible);
+        enumReturnString();
     }
-    if (EO_mmSpawnUseJEMM == QuickAnim.EO_mmSpawnUseJEMM.Max) { _target.mmSpawnUseJEMM = "Max"; } else if (EO_mmSpawnUseJEMM == QuickAnim.EO_mmSpawnUseJEMM.Min) { _target.mmSpawnUseJEMM = "Min"; }
-    if (EO_jeTabletRestore == QuickAnim.EO_jeTabletRestore.DoNotRestore) { _target.jeTabletRestore = "DoNotRestore"; } else if (EO_jeTabletRestore == QuickAnim.EO_jeTabletRestore.RestoreFromReg) { _target.jeTabletRestore = "RestoreFromReg"; } else if (EO_jeTabletRestore == QuickAnim.EO_jeTabletRestore.RestoreFromPreviousScene) { _target.jeTabletRestore = "RestoreFromPreviousScene"; }
-    if (EO_jeThisObjectLayout == QuickAnim.EO_jeThisObjectLayout.Classic) { _target.jeThisObjectLayout = "Classic"; } else if (EO_jeThisObjectLayout == QuickAnim.EO_jeThisObjectLayout.Tablet) { _target.jeThisObjectLayout = "Tablet"; }
+    public void enumReturnString()
+    {
+        if (EO_mmSpawnUseJEMM == QuickAnim.EO_mmSpawnUseJEMM.Max) { _target.mmSpawnUseJEMM = "Max"; } else if (EO_mmSpawnUseJEMM == QuickAnim.EO_mmSpawnUseJEMM.Min) { _target.mmSpawnUseJEMM = "Min"; }
+        if (EO_jeTabletRestore == QuickAnim.EO_jeTabletRestore.DoNotRestore) { _target.jeTabletRestore = "DoNotRestore"; } else if (EO_jeTabletRestore == QuickAnim.EO_jeTabletRestore.RestoreFromReg) { _target.jeTabletRestore = "RestoreFromReg"; } else if (EO_jeTabletRestore == QuickAnim.EO_jeTabletRestore.RestoreFromPreviousScene) { _target.jeTabletRestore = "RestoreFromPreviousScene"; }
+        if (EO_jeThisObjectLayout == QuickAnim.EO_jeThisObjectLayout.Classic) { _target.jeThisObjectLayout = "Classic"; } else if (EO_jeThisObjectLayout == QuickAnim.EO_jeThisObjectLayout.Tablet) { _target.jeThisObjectLayout = "Tablet"; }
+    }
 }
 #endif
