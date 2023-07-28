@@ -1,3 +1,11 @@
+
+//  Hello! This is old version of
+//  animation control script.
+//  Please use new script:
+//    - QuickAnim.cs
+//
+//  Thank you, kochkaev.
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,6 +13,9 @@ using UnityEngine.UI;
 
 public class AnimationControl : MonoBehaviour
 {
+
+    public string info = "Use new script!";
+    public string newScript = "QuickAnim.cs";
     //public string onJoinAnimName;
 
     public bool TabletLayoutConnect;
