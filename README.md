@@ -13,5 +13,5 @@
       VK: https://vk.com/kleverdi/
 
 Как с нами связаться:
-  - VK: https:??vk.com/octopusapp/
+  - VK: https://vk.com/octopusapp/
   - email: octopus.199app@gmail.com
