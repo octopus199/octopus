@@ -14,6 +14,6 @@ namespace GetSQL
     }
     public int GetInt(int column, int row)
     {
-        
+        //
     }
 }
