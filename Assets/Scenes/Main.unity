@@ -608,6 +608,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67bbefb3323b1ab4f9ed71fce383de01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  info: Use new script!
+  newScript: QuickAnim.cs
   TabletLayoutConnect: 0
   restoreTabletLayout: 0
   invertLayout: 0
@@ -632,6 +634,19 @@ MonoBehaviour:
   waitBeforeJoin: 0
   turnOffAnimatorAfterJoin: 0
   doLayoutChange: 0
+  onlyMinOrMax: 0
+  toMin: 0
+  spawnOperation: 0
+  minBindButton: []
+  minOperation: 0
+  maxBindButton: []
+  maxOperation: 0
+  activeIfMin: []
+  activeIfMax: []
+  invisibleOnMin: []
+  invisibleOnMax: []
+  anotherToMin: []
+  anotherToMinInverse: 
 --- !u!1 &173821671
 GameObject:
   m_ObjectHideFlags: 0
@@ -991,6 +1006,7 @@ GameObject:
   m_Component:
   - component: {fileID: 217992511}
   - component: {fileID: 217992515}
+  - component: {fileID: 217992516}
   - component: {fileID: 217992514}
   - component: {fileID: 217992513}
   - component: {fileID: 217992512}
@@ -1031,7 +1047,7 @@ Animator:
   m_GameObject: {fileID: 217992510}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 57c8faa86fabcca438c68e1115778980, type: 2}
+  m_Controller: {fileID: 9100000, guid: d3f65e86431c4d04ba93d4e2cab71212, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -1086,11 +1102,13 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 217992510}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 67bbefb3323b1ab4f9ed71fce383de01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  info: Use new script!
+  newScript: QuickAnim.cs
   TabletLayoutConnect: 0
   restoreTabletLayout: 0
   invertLayout: 0
@@ -1118,6 +1136,87 @@ MonoBehaviour:
   waitBeforeJoin: 0
   turnOffAnimatorAfterJoin: 0
   doLayoutChange: 0
+  onlyMinOrMax: 0
+  toMin: 0
+  spawnOperation: 0
+  minBindButton: []
+  minOperation: 0
+  maxBindButton: []
+  maxOperation: 0
+  activeIfMin: []
+  activeIfMax: []
+  invisibleOnMin: []
+  invisibleOnMax: []
+  anotherToMin: []
+  anotherToMinInverse: 
+--- !u!114 &217992516
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 217992510}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75c613268fb3f13459b211326697e372, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mmIsActive: 0
+  mmUseMax: 1
+  mmUseMin: 1
+  mmSpawnUseJE: 0
+  mmSpawnUseJEMM: Max
+  mmSpawnMin: 0
+  mmBindButtons: []
+  mmBindButtonsInvert: 
+  mmAnotherObj: []
+  mmInvisibleOnMax: []
+  mmInvisibleOnMin: []
+  mmActiveOnMax: []
+  mmActiveOnMin: []
+  mmAVNToMax: 
+  mmAVNMaxWait: 
+  mmAVNToMin: 
+  mmAVNMinWait: 
+  mmAVNGoInvisible: 
+  mmAVNGoVisible: 
+  jeIsActive: 1
+  jeUseJoin: 1
+  jeUseExit: 1
+  jeTurnOffAnimatorAfterJoin: 0
+  jeLayoutSwitchEnabled: 1
+  jeTabletRestore: DoNotRestore
+  jeTabletExit: DoNotRestore
+  jeThisObjectLayout: Classic
+  jeLayoutChange: 0
+  jeLayoutChangeBindButtonsToTablet:
+  - {fileID: 0}
+  jeLayoutChangeBindButtonsToClassic: []
+  jeLayoutScenesAlwaysTablet: []
+  jeLayoutScenesAlwaysClassic: []
+  jeWaitBeforeJoin: 0
+  jeWaitBeforeExit: 0
+  jeWaitBeforeJoinSeconds: 0
+  jeWaitBeforeExitSeconds: 0
+  jeDurationJoinSeconds: 0.2
+  jeDurationExitSeconds: 0.2
+  jeAVNJoin: Join
+  jeAVNExit: Exit
+  aAnimIfPrefs: 1
+  aAnimIfPrefsType:
+  - int
+  - int
+  aAnimIfPrefsName:
+  - settingsIsOpen
+  - settingsIsOpen
+  aAnimIfPrefsValue:
+  - 1
+  - 0
+  aAnimIfPrefsAnim:
+  - Join
+  - Exit
+  aAVNInvisible: Invisible
+  aAVNVisible: Visible
 --- !u!1 &261107616
 GameObject:
   m_ObjectHideFlags: 0
@@ -2094,6 +2193,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67bbefb3323b1ab4f9ed71fce383de01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  info: Use new script!
+  newScript: QuickAnim.cs
   TabletLayoutConnect: 0
   restoreTabletLayout: 0
   invertLayout: 0
@@ -2118,6 +2219,19 @@ MonoBehaviour:
   waitBeforeJoin: 0
   turnOffAnimatorAfterJoin: 0
   doLayoutChange: 0
+  onlyMinOrMax: 0
+  toMin: 0
+  spawnOperation: 0
+  minBindButton: []
+  minOperation: 0
+  maxBindButton: []
+  maxOperation: 0
+  activeIfMin: []
+  activeIfMax: []
+  invisibleOnMin: []
+  invisibleOnMax: []
+  anotherToMin: []
+  anotherToMinInverse: 
 --- !u!95 &598454903
 Animator:
   serializedVersion: 5
@@ -2918,6 +3032,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67bbefb3323b1ab4f9ed71fce383de01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  info: Use new script!
+  newScript: QuickAnim.cs
   TabletLayoutConnect: 0
   restoreTabletLayout: 1
   invertLayout: 1
@@ -2942,6 +3058,19 @@ MonoBehaviour:
   waitBeforeJoin: 0
   turnOffAnimatorAfterJoin: 0
   doLayoutChange: 0
+  onlyMinOrMax: 0
+  toMin: 0
+  spawnOperation: 0
+  minBindButton: []
+  minOperation: 0
+  maxBindButton: []
+  maxOperation: 0
+  activeIfMin: []
+  activeIfMax: []
+  invisibleOnMin: []
+  invisibleOnMax: []
+  anotherToMin: []
+  anotherToMinInverse: 
 --- !u!114 &753721194
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3032,6 +3161,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67bbefb3323b1ab4f9ed71fce383de01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  info: Use new script!
+  newScript: QuickAnim.cs
   TabletLayoutConnect: 0
   restoreTabletLayout: 0
   invertLayout: 0
@@ -3059,6 +3190,19 @@ MonoBehaviour:
   waitBeforeJoin: 0
   turnOffAnimatorAfterJoin: 1
   doLayoutChange: 0
+  onlyMinOrMax: 0
+  toMin: 0
+  spawnOperation: 0
+  minBindButton: []
+  minOperation: 0
+  maxBindButton: []
+  maxOperation: 0
+  activeIfMin: []
+  activeIfMax: []
+  invisibleOnMin: []
+  invisibleOnMax: []
+  anotherToMin: []
+  anotherToMinInverse: 
 --- !u!1 &824853931
 GameObject:
   m_ObjectHideFlags: 0
@@ -3812,6 +3956,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67bbefb3323b1ab4f9ed71fce383de01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  info: Use new script!
+  newScript: QuickAnim.cs
   TabletLayoutConnect: 0
   restoreTabletLayout: 0
   invertLayout: 0
@@ -3836,6 +3982,19 @@ MonoBehaviour:
   waitBeforeJoin: 0
   turnOffAnimatorAfterJoin: 0
   doLayoutChange: 0
+  onlyMinOrMax: 0
+  toMin: 0
+  spawnOperation: 0
+  minBindButton: []
+  minOperation: 0
+  maxBindButton: []
+  maxOperation: 0
+  activeIfMin: []
+  activeIfMax: []
+  invisibleOnMin: []
+  invisibleOnMax: []
+  anotherToMin: []
+  anotherToMinInverse: 
 --- !u!1 &929554047
 GameObject:
   m_ObjectHideFlags: 0
@@ -4586,6 +4745,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67bbefb3323b1ab4f9ed71fce383de01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  info: Use new script!
+  newScript: QuickAnim.cs
   TabletLayoutConnect: 0
   restoreTabletLayout: 0
   invertLayout: 0
@@ -4610,6 +4771,19 @@ MonoBehaviour:
   waitBeforeJoin: 0
   turnOffAnimatorAfterJoin: 0
   doLayoutChange: 0
+  onlyMinOrMax: 0
+  toMin: 0
+  spawnOperation: 0
+  minBindButton: []
+  minOperation: 0
+  maxBindButton: []
+  maxOperation: 0
+  activeIfMin: []
+  activeIfMax: []
+  invisibleOnMin: []
+  invisibleOnMax: []
+  anotherToMin: []
+  anotherToMinInverse: 
 --- !u!222 &1181272327
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -6908,6 +7082,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67bbefb3323b1ab4f9ed71fce383de01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  info: Use new script!
+  newScript: QuickAnim.cs
   TabletLayoutConnect: 0
   restoreTabletLayout: 0
   invertLayout: 0
@@ -6932,6 +7108,19 @@ MonoBehaviour:
   waitBeforeJoin: 0
   turnOffAnimatorAfterJoin: 0
   doLayoutChange: 0
+  onlyMinOrMax: 0
+  toMin: 0
+  spawnOperation: 0
+  minBindButton: []
+  minOperation: 0
+  maxBindButton: []
+  maxOperation: 0
+  activeIfMin: []
+  activeIfMax: []
+  invisibleOnMin: []
+  invisibleOnMax: []
+  anotherToMin: []
+  anotherToMinInverse: 
 --- !u!222 &1700361892
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -8132,6 +8321,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67bbefb3323b1ab4f9ed71fce383de01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  info: Use new script!
+  newScript: QuickAnim.cs
   TabletLayoutConnect: 0
   restoreTabletLayout: 0
   invertLayout: 0
@@ -8159,6 +8350,19 @@ MonoBehaviour:
   waitBeforeJoin: 0
   turnOffAnimatorAfterJoin: 0
   doLayoutChange: 0
+  onlyMinOrMax: 0
+  toMin: 0
+  spawnOperation: 0
+  minBindButton: []
+  minOperation: 0
+  maxBindButton: []
+  maxOperation: 0
+  activeIfMin: []
+  activeIfMax: []
+  invisibleOnMin: []
+  invisibleOnMax: []
+  anotherToMin: []
+  anotherToMinInverse: 
 --- !u!222 &1936671221
 CanvasRenderer:
   m_ObjectHideFlags: 0

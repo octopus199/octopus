@@ -12,6 +12,8 @@ using UnityEditor;
 public class QuickAnim : MonoBehaviour
 {
 
+    private static Object excampleObject;
+
     //  mm - Min, Max. 
     //  Min - on switch to thumbnail view.
     //  Max - on switch to full view. 
@@ -21,13 +23,13 @@ public class QuickAnim : MonoBehaviour
     public bool mmSpawnUseJE = false;
     public string mmSpawnUseJEMM;
     public bool mmSpawnMin = false;
-    public Object[] mmBindButtons;
-    public bool[] mmBindButtonsInvert;
-    public Object[] mmAnotherObj;
-    public Object[] mmInvisibleOnMax;
-    public Object[] mmInvisibleOnMin;
-    public Object[] mmActiveOnMax;
-    public Object[] mmActiveOnMin;
+    public Object[] mmBindButtons = {excampleObject};
+    public bool[] mmBindButtonsInvert = {true};
+    public Object[] mmAnotherObj = {excampleObject};
+    public Object[] mmInvisibleOnMax = {excampleObject};
+    public Object[] mmInvisibleOnMin = {excampleObject};
+    public Object[] mmActiveOnMax = {excampleObject};
+    public Object[] mmActiveOnMin = {excampleObject};
     public string mmAVNToMax;
     public string mmAVNMaxWait;
     public string mmAVNToMin;
@@ -36,8 +38,8 @@ public class QuickAnim : MonoBehaviour
     public string mmAVNGoVisible;
     public enum EO_mmSpawnUseJEMM
     {
-        Max = 0,
-        Min = 1
+        Max,
+        Min
     }
 
     //  je - Join, Exit. 
@@ -48,14 +50,14 @@ public class QuickAnim : MonoBehaviour
     public bool jeUseExit = true;
     public bool jeTurnOffAnimatorAfterJoin;
     public bool jeLayoutSwitchEnabled;
-    public string jeTabletRestore = "DoNotRestore";
-    public string jeTabletExit = "DoNotRestore";
+    public string jeTabletRestore;
+    public string jeTabletExit;
     public string jeThisObjectLayout;
     public bool jeLayoutChange;
-    public Object[] jeLayoutChangeBindButtonsToTablet;
-    public Object[] jeLayoutChangeBindButtonsToClassic;
-    public string[] jeLayoutScenesAlwaysTablet;
-    public string[] jeLayoutScenesAlwaysClassic;
+    public Object[] jeLayoutChangeBindButtonsToTablet = {excampleObject};
+    public Object[] jeLayoutChangeBindButtonsToClassic = {excampleObject};
+    public string[] jeLayoutScenesAlwaysTablet = {""};
+    public string[] jeLayoutScenesAlwaysClassic = {""};
     public bool jeWaitBeforeJoin;
     public bool jeWaitBeforeExit;
     public float jeWaitBeforeJoinSeconds = 0.0f;
@@ -66,28 +68,28 @@ public class QuickAnim : MonoBehaviour
     public string jeAVNExit;
     public enum EO_jeTabletRestore
     {
-        DoNotRestore = 0,
-        RestoreFromReg = 1,
-        RestoreFromPreviousSceneName = 2
+        DoNotRestore,
+        RestoreFromReg,
+        RestoreFromPreviousSceneName
     }
     public enum EO_jeTabletExit
     {
-        DoNotRestore = 0,
-        RestoreFromReg = 1,
-        RestoreFromNextSceneName = 2
+        DoNotRestore,
+        RestoreFromReg,
+        RestoreFromNextSceneName
     }
     public enum EO_jeThisObjectLayout
     {
-        Classic = 0,
-        Tablet = 1
+        Classic,
+        Tablet
     }
 
     //  a - another
     public bool aAnimIfPrefs;
-    public string[] aAnimIfPrefsType;
-    public string[] aAnimIfPrefsName;
-    public string[] aAnimIfPrefsValue;
-    public string[] aAnimIfPrefsAnim;
+    public string[] aAnimIfPrefsType = {""};
+    public string[] aAnimIfPrefsName = {""};
+    public string[] aAnimIfPrefsValue = {""};
+    public string[] aAnimIfPrefsAnim = {""};
     public string aAVNInvisible;
     public string aAVNVisible;
 
@@ -103,7 +105,7 @@ public class QuickAnim : MonoBehaviour
             StartCoroutine(JE("Join", false));
             if (jeLayoutChange)
             {
-                for (int i = 0; i != jeLayoutChangeBindButtonsToClassic.Length; i++)
+                for (int i = 1; i != jeLayoutChangeBindButtonsToClassic.Length; i++)
                 {
                     string joinOrExit = "Join";
                     if (jeThisObjectLayout == "Tablet")
@@ -115,23 +117,30 @@ public class QuickAnim : MonoBehaviour
             }
         }
 
-        for (int i = 0; i != mmBindButtons.Length; i++)
+        if (mmIsActive)
         {
-            string layout = "Max";
-            if (mmBindButtonsInvert[i])
+            for (int i = 1; i != mmBindButtons.Length; i++)
             {
-                layout = "Min";
+                string layout = "Max";
+                if (mmBindButtonsInvert[i])
+                {
+                    layout = "Min";
+                }
+
+                ((GameObject)mmBindButtons[i]).GetComponent<Button>().onClick.AddListener(delegate
+                {
+                    StartCoroutine(MM("Update", false, layout));
+                });
             }
-            ((GameObject) mmBindButtons[i]).GetComponent<Button>().onClick.AddListener(delegate { StartCoroutine(MM("Update", false, layout)); });
         }
     }
 
     //  Update is called once per frame
     void Update()
     {
-        if (aAnimIfPrefsName.Length != 0)
+        if (aAnimIfPrefsName.Length != 1 & aAnimIfPrefs)
         {
-            for (int i = 0; i != aAnimIfPrefsName.Length; i++)
+            for (int i = 1; i != aAnimIfPrefsName.Length; i++)
             {
                 bool anim = false;
                 if (aAnimIfPrefsType[i] == "int")
@@ -149,9 +158,10 @@ public class QuickAnim : MonoBehaviour
                 }
                 if (anim)
                 {
-                    if ((aAnimIfPrefsAnim[i] == "Join" || aAnimIfPrefsAnim[i] == "Exit") & jeIsActive)
+                    if ((aAnimIfPrefsAnim[i] == "Join" & (GetComponent<Animator>().GetBool(jeAVNExit) || GetComponent<Animator>().GetBool(aAVNInvisible))) || (aAnimIfPrefsAnim[i] == "Exit" & (GetComponent<Animator>().GetBool(jeAVNJoin) || GetComponent<Animator>().GetBool(aAVNVisible))) & jeIsActive)
                     {
                         StartCoroutine(JE(aAnimIfPrefsAnim[i], false));
+                        Debug.Log("[OctopuS] QuickAnim.cs: Update anim if prefs, start Join or Exit anim");
                     } else if ((aAnimIfPrefsAnim[i] == "Min" || aAnimIfPrefsAnim[i] == "Max") & mmIsActive)
                     {
                         StartCoroutine(MM("Update", false, aAnimIfPrefsAnim[i]));
@@ -180,23 +190,23 @@ public class QuickAnim : MonoBehaviour
                         GetComponent<Animator>().SetBool(jeAVNJoin, true);
                     }
 
-                    for (int i = 0; i != mmAnotherObj.Length; i++)
+                    for (int i = 1; i != mmAnotherObj.Length; i++)
                     {
                         ((GameObject) mmAnotherObj[i]).GetComponent<Animator>().SetBool(mmAVNToMax, true);
                     }
-                    for (int i = 0; i != mmInvisibleOnMax.Length; i++)
+                    for (int i = 1; i != mmInvisibleOnMax.Length; i++)
                     {
                         ((GameObject) mmInvisibleOnMax[i]).GetComponent<Animator>().SetBool(mmAVNGoInvisible, true);
                     }
-                    for (int i = 0; i != mmInvisibleOnMin.Length; i++)
+                    for (int i = 1; i != mmInvisibleOnMin.Length; i++)
                     {
                         ((GameObject) mmInvisibleOnMin[i]).GetComponent<Animator>().SetBool(mmAVNGoVisible, true);
                     }
-                    for (int i = 0; i != mmActiveOnMax.Length; i++)
+                    for (int i = 1; i != mmActiveOnMax.Length; i++)
                     {
                         ((GameObject) mmActiveOnMax[i]).SetActive(true);
                     }
-                    for (int i = 0; i != mmActiveOnMin.Length; i++)
+                    for (int i = 1; i != mmActiveOnMin.Length; i++)
                     {
                         ((GameObject) mmActiveOnMin[i]).SetActive(false);
                     }
@@ -212,17 +222,17 @@ public class QuickAnim : MonoBehaviour
                         GetComponent<Animator>().SetBool(aAVNVisible, true);
                     }
 
-                    for (int i = 0; i != mmAnotherObj.Length; i++)
+                    for (int i = 1; i != mmAnotherObj.Length; i++)
                     {
                         ((GameObject) mmAnotherObj[i]).GetComponent<Animator>().SetBool(mmAVNToMax, false);
                         ((GameObject) mmAnotherObj[i]).GetComponent<Animator>().SetBool(mmAVNMaxWait, true);
                     }
-                    for (int i = 0; i != mmInvisibleOnMax.Length; i++)
+                    for (int i = 1; i != mmInvisibleOnMax.Length; i++)
                     {
                         ((GameObject) mmInvisibleOnMax[i]).GetComponent<Animator>().SetBool(aAVNInvisible, true);
                         ((GameObject) mmInvisibleOnMax[i]).GetComponent<Animator>().SetBool(mmAVNGoInvisible, false);
                     }
-                    for (int i = 0; i != mmInvisibleOnMin.Length; i++)
+                    for (int i = 1; i != mmInvisibleOnMin.Length; i++)
                     {
                         ((GameObject) mmInvisibleOnMin[i]).GetComponent<Animator>().SetBool(aAVNVisible, true);
                         ((GameObject) mmInvisibleOnMin[i]).GetComponent<Animator>().SetBool(mmAVNGoVisible, false);
@@ -240,23 +250,23 @@ public class QuickAnim : MonoBehaviour
                         GetComponent<Animator>().SetBool(jeAVNJoin, true);
                     }
 
-                    for (int i = 0; i != mmAnotherObj.Length; i++)
+                    for (int i = 1; i != mmAnotherObj.Length; i++)
                     {
                         ((GameObject) mmAnotherObj[i]).GetComponent<Animator>().SetBool(mmAVNToMax, true);
                     }
-                    for (int i = 0; i != mmInvisibleOnMax.Length; i++)
+                    for (int i = 1; i != mmInvisibleOnMax.Length; i++)
                     {
                         ((GameObject) mmInvisibleOnMax[i]).GetComponent<Animator>().SetBool(mmAVNGoInvisible, true);
                     }
-                    for (int i = 0; i != mmInvisibleOnMin.Length; i++)
+                    for (int i = 1; i != mmInvisibleOnMin.Length; i++)
                     {
                         ((GameObject) mmInvisibleOnMin[i]).GetComponent<Animator>().SetBool(mmAVNGoVisible, true);
                     }
-                    for (int i = 0; i != mmActiveOnMax.Length; i++)
+                    for (int i = 1; i != mmActiveOnMax.Length; i++)
                     {
                         ((GameObject) mmActiveOnMax[i]).SetActive(true);
                     }
-                    for (int i = 0; i != mmActiveOnMin.Length; i++)
+                    for (int i = 1; i != mmActiveOnMin.Length; i++)
                     {
                         ((GameObject) mmActiveOnMin[i]).SetActive(false);
                     }
@@ -273,17 +283,17 @@ public class QuickAnim : MonoBehaviour
                         GetComponent<Animator>().SetBool(aAVNVisible, true);
                     }
 
-                    for (int i = 0; i != mmAnotherObj.Length; i++)
+                    for (int i = 1; i != mmAnotherObj.Length; i++)
                     {
                         ((GameObject) mmAnotherObj[i]).GetComponent<Animator>().SetBool(mmAVNToMax, false);
                         ((GameObject) mmAnotherObj[i]).GetComponent<Animator>().SetBool(mmAVNMaxWait, true);
                     }
-                    for (int i = 0; i != mmInvisibleOnMax.Length; i++)
+                    for (int i = 1; i != mmInvisibleOnMax.Length; i++)
                     {
                         ((GameObject) mmInvisibleOnMax[i]).GetComponent<Animator>().SetBool(aAVNInvisible, true);
                         ((GameObject) mmInvisibleOnMax[i]).GetComponent<Animator>().SetBool(mmAVNGoInvisible, false);
                     }
-                    for (int i = 0; i != mmInvisibleOnMin.Length; i++)
+                    for (int i = 1; i != mmInvisibleOnMin.Length; i++)
                     {
                         ((GameObject) mmInvisibleOnMin[i]).GetComponent<Animator>().SetBool(aAVNVisible, true);
                         ((GameObject) mmInvisibleOnMin[i]).GetComponent<Animator>().SetBool(mmAVNGoVisible, false);
@@ -296,15 +306,15 @@ public class QuickAnim : MonoBehaviour
                 //  Spawn max
                 if (mmUseMax & ((!mmSpawnMin & !mmSpawnUseJE) || (mmSpawnUseJE & mmSpawnUseJEMM == "Max")))
                 {
-                    for (int i = 0; i != mmInvisibleOnMax.Length; i++)
+                    for (int i = 1; i != mmInvisibleOnMax.Length; i++)
                     {
                         ((GameObject) mmInvisibleOnMax[i]).GetComponent<Animator>().SetBool(aAVNInvisible, true);
                     }
-                    for (int i = 0; i != mmActiveOnMax.Length; i++)
+                    for (int i = 1; i != mmActiveOnMax.Length; i++)
                     {
                         ((GameObject) mmActiveOnMax[i]).SetActive(true);
                     }
-                    for (int i = 0; i != mmActiveOnMin.Length; i++)
+                    for (int i = 1; i != mmActiveOnMin.Length; i++)
                     {
                         ((GameObject)mmActiveOnMin[i]).SetActive(false);
                     }
@@ -318,11 +328,11 @@ public class QuickAnim : MonoBehaviour
                         GetComponent<Animator>().SetBool(aAVNVisible, true);
                     }
 
-                    for (int i = 0; i != mmAnotherObj.Length; i++)
+                    for (int i = 1; i != mmAnotherObj.Length; i++)
                     {
                         ((GameObject) mmAnotherObj[i]).GetComponent<Animator>().SetBool(mmAVNMaxWait, true);
                     }
-                    for (int i = 0; i != mmInvisibleOnMin.Length; i++)
+                    for (int i = 1; i != mmInvisibleOnMin.Length; i++)
                     {
                         ((GameObject) mmInvisibleOnMin[i]).GetComponent<Animator>().SetBool(aAVNVisible, true);
                     }
@@ -330,15 +340,15 @@ public class QuickAnim : MonoBehaviour
                 //  Spawn min
                 else if (mmUseMin & ((mmSpawnMin & !mmSpawnUseJE) || (mmSpawnUseJE & mmSpawnUseJEMM == "Min")))
                 {
-                    for (int i = 0; i != mmInvisibleOnMax.Length; i++)
+                    for (int i = 1; i != mmInvisibleOnMax.Length; i++)
                     {
                         ((GameObject) mmInvisibleOnMax[i]).GetComponent<Animator>().SetBool(aAVNInvisible, true);
                     }
-                    for (int i = 0; i != mmActiveOnMax.Length; i++)
+                    for (int i = 1; i != mmActiveOnMax.Length; i++)
                     {
                         ((GameObject) mmActiveOnMax[i]).SetActive(true);
                     }
-                    for (int i = 0; i != mmActiveOnMin.Length; i++)
+                    for (int i = 1; i != mmActiveOnMin.Length; i++)
                     {
                         ((GameObject) mmActiveOnMin[i]).SetActive(false);
                     }
@@ -352,11 +362,11 @@ public class QuickAnim : MonoBehaviour
                         GetComponent<Animator>().SetBool(aAVNVisible, true);
                     }
 
-                    for (int i = 0; i != mmAnotherObj.Length; i++)
+                    for (int i = 1; i != mmAnotherObj.Length; i++)
                     {
                         ((GameObject) mmAnotherObj[i]).GetComponent<Animator>().SetBool(mmAVNMaxWait, true);
                     }
-                    for (int i = 0; i != mmInvisibleOnMin.Length; i++)
+                    for (int i = 1; i != mmInvisibleOnMin.Length; i++)
                     {
                         ((GameObject) mmInvisibleOnMin[i]).GetComponent<Animator>().SetBool(aAVNVisible, true);
                     }
@@ -377,28 +387,28 @@ public class QuickAnim : MonoBehaviour
                     GetComponent<Animator>().SetBool(aAVNInvisible, false);
                     GetComponent<Animator>().SetBool(mmAVNToMax, true);
 
-                    for (int i = 0; i != mmAnotherObj.Length; i++)
+                    for (int i = 1; i != mmAnotherObj.Length; i++)
                     {
                         ((GameObject) mmAnotherObj[i]).GetComponent<Animator>().SetBool(mmAVNMinWait, false);
                         ((GameObject) mmAnotherObj[i]).GetComponent<Animator>().SetBool(aAVNVisible, false);
                         ((GameObject) mmAnotherObj[i]).GetComponent<Animator>().SetBool(aAVNInvisible, false);
                         ((GameObject) mmAnotherObj[i]).GetComponent<Animator>().SetBool(mmAVNToMax, true);
                     }
-                    for (int i = 0; i != mmInvisibleOnMax.Length; i++)
+                    for (int i = 1; i != mmInvisibleOnMax.Length; i++)
                     {
                         ((GameObject) mmInvisibleOnMax[i]).GetComponent<Animator>().SetBool(aAVNVisible, false);
                         ((GameObject) mmInvisibleOnMax[i]).GetComponent<Animator>().SetBool(mmAVNGoInvisible, true);
                     }
-                    for (int i = 0; i != mmInvisibleOnMin.Length; i++)
+                    for (int i = 1; i != mmInvisibleOnMin.Length; i++)
                     {
                         ((GameObject) mmInvisibleOnMin[i]).GetComponent<Animator>().SetBool(aAVNInvisible, false);
                         ((GameObject) mmInvisibleOnMin[i]).GetComponent<Animator>().SetBool(mmAVNGoVisible, true);
                     }
-                    for (int i = 0; i != mmActiveOnMax.Length; i++)
+                    for (int i = 1; i != mmActiveOnMax.Length; i++)
                     {
                         ((GameObject) mmActiveOnMax[i]).SetActive(true);
                     }
-                    for (int i = 0; i != mmActiveOnMin.Length; i++)
+                    for (int i = 1; i != mmActiveOnMin.Length; i++)
                     {
                         ((GameObject) mmActiveOnMin[i]).SetActive(false);
                     }
@@ -407,17 +417,17 @@ public class QuickAnim : MonoBehaviour
                     GetComponent<Animator>().SetBool(mmAVNToMax, false);
                     GetComponent<Animator>().SetBool(mmAVNMaxWait, true);
 
-                    for (int i = 0; i != mmAnotherObj.Length; i++)
+                    for (int i = 1; i != mmAnotherObj.Length; i++)
                     {
                         ((GameObject) mmAnotherObj[i]).GetComponent<Animator>().SetBool(mmAVNToMax, false);
                         ((GameObject) mmAnotherObj[i]).GetComponent<Animator>().SetBool(mmAVNMaxWait, true);
                     }
-                    for (int i = 0; i != mmInvisibleOnMax.Length; i++)
+                    for (int i = 1; i != mmInvisibleOnMax.Length; i++)
                     {
                         ((GameObject) mmInvisibleOnMax[i]).GetComponent<Animator>().SetBool(aAVNInvisible, true);
                         ((GameObject) mmInvisibleOnMax[i]).GetComponent<Animator>().SetBool(mmAVNGoInvisible, false);
                     }
-                    for (int i = 0; i != mmInvisibleOnMin.Length; i++)
+                    for (int i = 1; i != mmInvisibleOnMin.Length; i++)
                     {
                         ((GameObject) mmInvisibleOnMin[i]).GetComponent<Animator>().SetBool(aAVNVisible, true);
                         ((GameObject) mmInvisibleOnMin[i]).GetComponent<Animator>().SetBool(mmAVNGoVisible, false);
@@ -431,28 +441,28 @@ public class QuickAnim : MonoBehaviour
                     GetComponent<Animator>().SetBool(aAVNInvisible, false);
                     GetComponent<Animator>().SetBool(mmAVNToMax, true);
 
-                    for (int i = 0; i != mmAnotherObj.Length; i++)
+                    for (int i = 1; i != mmAnotherObj.Length; i++)
                     {
                         ((GameObject) mmAnotherObj[i]).GetComponent<Animator>().SetBool(mmAVNMaxWait, false);
                         ((GameObject) mmAnotherObj[i]).GetComponent<Animator>().SetBool(aAVNVisible, false);
                         ((GameObject) mmAnotherObj[i]).GetComponent<Animator>().SetBool(aAVNInvisible, false);
                         ((GameObject) mmAnotherObj[i]).GetComponent<Animator>().SetBool(mmAVNToMin, true);
                     }
-                    for (int i = 0; i != mmInvisibleOnMin.Length; i++)
+                    for (int i = 1; i != mmInvisibleOnMin.Length; i++)
                     {
                         ((GameObject) mmInvisibleOnMax[i]).GetComponent<Animator>().SetBool(aAVNVisible, false);
                         ((GameObject) mmInvisibleOnMax[i]).GetComponent<Animator>().SetBool(mmAVNGoInvisible, true);
                     }
-                    for (int i = 0; i != mmInvisibleOnMax.Length; i++)
+                    for (int i = 1; i != mmInvisibleOnMax.Length; i++)
                     {
                         ((GameObject) mmInvisibleOnMin[i]).GetComponent<Animator>().SetBool(aAVNInvisible, false);
                         ((GameObject) mmInvisibleOnMin[i]).GetComponent<Animator>().SetBool(mmAVNGoVisible, true);
                     }
-                    for (int i = 0; i != mmActiveOnMin.Length; i++)
+                    for (int i = 1; i != mmActiveOnMin.Length; i++)
                     {
                         ((GameObject) mmActiveOnMax[i]).SetActive(true);
                     }
-                    for (int i = 0; i != mmActiveOnMax.Length; i++)
+                    for (int i = 1; i != mmActiveOnMax.Length; i++)
                     {
                         ((GameObject) mmActiveOnMin[i]).SetActive(false);
                     }
@@ -461,17 +471,17 @@ public class QuickAnim : MonoBehaviour
                     GetComponent<Animator>().SetBool(mmAVNToMin, false);
                     GetComponent<Animator>().SetBool(mmAVNMinWait, true);
 
-                    for (int i = 0; i != mmAnotherObj.Length; i++)
+                    for (int i = 1; i != mmAnotherObj.Length; i++)
                     {
                         ((GameObject) mmAnotherObj[i]).GetComponent<Animator>().SetBool(mmAVNToMin, false);
                         ((GameObject) mmAnotherObj[i]).GetComponent<Animator>().SetBool(mmAVNMinWait, true);
                     }
-                    for (int i = 0; i != mmInvisibleOnMin.Length; i++)
+                    for (int i = 1; i != mmInvisibleOnMin.Length; i++)
                     {
                         ((GameObject) mmInvisibleOnMax[i]).GetComponent<Animator>().SetBool(aAVNInvisible, true);
                         ((GameObject) mmInvisibleOnMax[i]).GetComponent<Animator>().SetBool(mmAVNGoInvisible, false);
                     }
-                    for (int i = 0; i != mmInvisibleOnMax.Length; i++)
+                    for (int i = 1; i != mmInvisibleOnMax.Length; i++)
                     {
                         ((GameObject) mmInvisibleOnMin[i]).GetComponent<Animator>().SetBool(aAVNVisible, true);
                         ((GameObject) mmInvisibleOnMin[i]).GetComponent<Animator>().SetBool(mmAVNGoVisible, false);
@@ -489,28 +499,28 @@ public class QuickAnim : MonoBehaviour
                     GetComponent<Animator>().SetBool(aAVNInvisible, false);
                     GetComponent<Animator>().SetBool(mmAVNMaxWait, true);
 
-                    for (int i = 0; i != mmAnotherObj.Length; i++)
+                    for (int i = 1; i != mmAnotherObj.Length; i++)
                     {
                         ((GameObject) mmAnotherObj[i]).GetComponent<Animator>().SetBool(mmAVNMinWait, false);
                         ((GameObject) mmAnotherObj[i]).GetComponent<Animator>().SetBool(aAVNVisible, false);
                         ((GameObject) mmAnotherObj[i]).GetComponent<Animator>().SetBool(aAVNInvisible, false);
                         ((GameObject) mmAnotherObj[i]).GetComponent<Animator>().SetBool(mmAVNMaxWait, true);
                     }
-                    for (int i = 0; i != mmInvisibleOnMax.Length; i++)
+                    for (int i = 1; i != mmInvisibleOnMax.Length; i++)
                     {
                         ((GameObject) mmInvisibleOnMax[i]).GetComponent<Animator>().SetBool(aAVNVisible, false);
                         ((GameObject) mmInvisibleOnMax[i]).GetComponent<Animator>().SetBool(aAVNInvisible, true);
                     }
-                    for (int i = 0; i != mmInvisibleOnMin.Length; i++)
+                    for (int i = 1; i != mmInvisibleOnMin.Length; i++)
                     {
                         ((GameObject) mmInvisibleOnMin[i]).GetComponent<Animator>().SetBool(aAVNInvisible, false);
                         ((GameObject) mmInvisibleOnMin[i]).GetComponent<Animator>().SetBool(aAVNVisible, true);
                     }
-                    for (int i = 0; i != mmActiveOnMax.Length; i++)
+                    for (int i = 1; i != mmActiveOnMax.Length; i++)
                     {
                         ((GameObject) mmActiveOnMax[i]).SetActive(true);
                     }
-                    for (int i = 0; i != mmActiveOnMin.Length; i++)
+                    for (int i = 1; i != mmActiveOnMin.Length; i++)
                     {
                         ((GameObject) mmActiveOnMin[i]).SetActive(false);
                     }
@@ -523,28 +533,28 @@ public class QuickAnim : MonoBehaviour
                     GetComponent<Animator>().SetBool(aAVNInvisible, false);
                     GetComponent<Animator>().SetBool(mmAVNMinWait, true);
 
-                    for (int i = 0; i != mmAnotherObj.Length; i++)
+                    for (int i = 1; i != mmAnotherObj.Length; i++)
                     {
                         ((GameObject) mmAnotherObj[i]).GetComponent<Animator>().SetBool(mmAVNMaxWait, false);
                         ((GameObject) mmAnotherObj[i]).GetComponent<Animator>().SetBool(aAVNVisible, false);
                         ((GameObject) mmAnotherObj[i]).GetComponent<Animator>().SetBool(aAVNInvisible, false);
                         ((GameObject) mmAnotherObj[i]).GetComponent<Animator>().SetBool(mmAVNMinWait, true);
                     }
-                    for (int i = 0; i != mmInvisibleOnMin.Length; i++)
+                    for (int i = 1; i != mmInvisibleOnMin.Length; i++)
                     {
                         ((GameObject) mmInvisibleOnMax[i]).GetComponent<Animator>().SetBool(aAVNVisible, false);
                         ((GameObject) mmInvisibleOnMax[i]).GetComponent<Animator>().SetBool(aAVNInvisible, true);
                     }
-                    for (int i = 0; i != mmInvisibleOnMax.Length; i++)
+                    for (int i = 1; i != mmInvisibleOnMax.Length; i++)
                     {
                         ((GameObject) mmInvisibleOnMin[i]).GetComponent<Animator>().SetBool(aAVNInvisible, false);
                         ((GameObject) mmInvisibleOnMin[i]).GetComponent<Animator>().SetBool(aAVNVisible, true);
                     }
-                    for (int i = 0; i != mmActiveOnMin.Length; i++)
+                    for (int i = 1; i != mmActiveOnMin.Length; i++)
                     {
                         ((GameObject) mmActiveOnMax[i]).SetActive(true);
                     }
-                    for (int i = 0; i != mmActiveOnMax.Length; i++)
+                    for (int i = 1; i != mmActiveOnMax.Length; i++)
                     {
                         ((GameObject) mmActiveOnMin[i]).SetActive(false);
                     }
@@ -574,7 +584,7 @@ public class QuickAnim : MonoBehaviour
                     else if (jeTabletRestore == "RestoreFromPreviousSceneName")
                     {
                         string previousScene = PlayerPrefs.GetString("");
-                        for (int i = 0; i != jeLayoutScenesAlwaysTablet.Length; i++)
+                        for (int i = 1; i != jeLayoutScenesAlwaysTablet.Length; i++)
                         {
                             if (previousScene == jeLayoutScenesAlwaysTablet[i])
                             {
@@ -671,7 +681,7 @@ public class QuickAnim : MonoBehaviour
                     else if (jeTabletRestore == "RestoreFromNextSceneName")
                     {
                         string nextScene = PlayerPrefs.GetString("");
-                        for (int i = 0; i != jeLayoutScenesAlwaysTablet.Length; i++)
+                        for (int i = 1; i != jeLayoutScenesAlwaysTablet.Length; i++)
                         {
                             if (nextScene == jeLayoutScenesAlwaysTablet[i])
                             {
@@ -741,10 +751,28 @@ public class CustomGUIEditor : Editor
     }
 
     //  Set enums
-    public QuickAnim.EO_mmSpawnUseJEMM EO_mmSpawnUseJEMM;
-    public QuickAnim.EO_jeTabletRestore EO_jeTabletRestore;
-    public QuickAnim.EO_jeTabletExit EO_jeTabletExit;
-    public QuickAnim.EO_jeThisObjectLayout EO_jeThisObjectLayout;
+    public enum EO_mmSpawnUseJEMM
+    {
+        Max,
+        Min
+    }
+    public enum EO_jeTabletRestore
+    {
+        DoNotRestore,
+        RestoreFromReg,
+        RestoreFromPreviousSceneName
+    }
+    public enum EO_jeTabletExit
+    {
+        DoNotRestore,
+        RestoreFromReg,
+        RestoreFromNextSceneName
+    }
+    public enum EO_jeThisObjectLayout
+    {
+        Classic,
+        Tablet
+    }
 
     //  Set arrays
     //  mm
@@ -765,10 +793,10 @@ public class CustomGUIEditor : Editor
     private EditorGUILayoutArrays.ArrayFieldSettings AFS_jeLayoutScenesAlwaysClassic = new EditorGUILayoutArrays.ArrayFieldSettings("  |    |  Scenes, always Classic");
 
     //  a
-    private EditorGUILayoutArrays.ArrayFieldSettings AFS_aAnimIfPrefsType = new EditorGUILayoutArrays.ArrayFieldSettings("  |    |  Prefs value type (for example: int)");
-    private EditorGUILayoutArrays.ArrayFieldSettings AFS_aAnimIfPrefsName = new EditorGUILayoutArrays.ArrayFieldSettings("  |    |   Prefs name (for excample: importantInt)");
-    private EditorGUILayoutArrays.ArrayFieldSettings AFS_aAnimIfPrefsValue = new EditorGUILayoutArrays.ArrayFieldSettings("  |    |  Prefs value for start anim (for excample: 0)");
-    private EditorGUILayoutArrays.ArrayFieldSettings AFS_aAnimIfPrefsAnim = new EditorGUILayoutArrays.ArrayFieldSettings("  |    |  If prefs play anim (for excample: Join)");
+    private EditorGUILayoutArrays.ArrayFieldSettings AFS_aAnimIfPrefsType = new EditorGUILayoutArrays.ArrayFieldSettings("  |  Prefs value type (for example: int)");
+    private EditorGUILayoutArrays.ArrayFieldSettings AFS_aAnimIfPrefsName = new EditorGUILayoutArrays.ArrayFieldSettings("  |  Prefs name (for excample: importantInt)");
+    private EditorGUILayoutArrays.ArrayFieldSettings AFS_aAnimIfPrefsValue = new EditorGUILayoutArrays.ArrayFieldSettings("  |  Prefs value for start anim (for excample: 0)");
+    private EditorGUILayoutArrays.ArrayFieldSettings AFS_aAnimIfPrefsAnim = new EditorGUILayoutArrays.ArrayFieldSettings("  |  If prefs play anim (for excample: Join)");
 
     public override void OnInspectorGUI()
     {
@@ -785,7 +813,7 @@ public class CustomGUIEditor : Editor
                 _target.mmSpawnMin = EditorGUILayout.Toggle("  |    |  Spawn in Min", _target.mmSpawnMin);
             } else if (_target.mmSpawnUseJE & _target.jeIsActive)
             {
-                EO_mmSpawnUseJEMM = (QuickAnim.EO_mmSpawnUseJEMM)EditorGUILayout.EnumPopup("  |    |  After Join layout:", EO_mmSpawnUseJEMM);
+                QuickAnim.EO_mmSpawnUseJEMM = (QuickAnim.EO_mmSpawnUseJEMM)EditorGUILayout.EnumPopup("  |    |  After Join layout:", QuickAnim.EO_mmSpawnUseJEMM);
             } else 
             {
                 EditorGUILayout.HelpBox("You must enable Join and Exit, or uncheck 'Use Join for Spawn'!", MessageType.Warning);
@@ -856,8 +884,8 @@ public class CustomGUIEditor : Editor
                 _target.jeWaitBeforeExitSeconds = EditorGUILayout.FloatField("  |    |  Wait Seconds (float)", _target.jeWaitBeforeExitSeconds);
             }
             EditorGUILayout.HelpBox(" |   Duration of Join / Exit anims, seconds (float). Default: 0.2f", MessageType.None);
-            _target.jeDurationJoinSeconds = EditorGUILayout.FloatField("  |    |  Duration of Join", _target.jeDurationJoinSeconds);
-            _target.jeDurationExitSeconds = EditorGUILayout.FloatField("  |    |  Duration of Exit", _target.jeDurationExitSeconds);
+            _target.jeDurationJoinSeconds = EditorGUILayout.FloatField("  |  Duration of Join", _target.jeDurationJoinSeconds);
+            _target.jeDurationExitSeconds = EditorGUILayout.FloatField("  |  Duration of Exit", _target.jeDurationExitSeconds);
             EditorGUILayout.HelpBox(" |   Anim Value Name's: ", MessageType.None);
             _target.jeAVNJoin = EditorGUILayout.TextField("  |  Join: ", _target.jeAVNJoin);
             _target.jeAVNExit = EditorGUILayout.TextField("  |  Exit: ", _target.jeAVNExit);
@@ -866,16 +894,16 @@ public class CustomGUIEditor : Editor
         }
 
         //  a
-        EditorGUILayout.HelpBox(" |   Anim if pref's - Play animation if \n |   value in preference == value in this array's.\n |   Available anims:\n       -  Join\n       -  Exit\n       -  Min\n       -  Max", MessageType.None);
-        _target.aAnimIfPrefs = EditorGUILayout.Toggle("  |  Play anim's if pref", _target.aAnimIfPrefs);
+        EditorGUILayout.HelpBox("Anim if pref's - Play animation if \nvalue in preference == value in this array's.\nAvailable anims:\n  -  Join\n  -  Exit\n  -  Min\n  -  Max", MessageType.None);
+        _target.aAnimIfPrefs = EditorGUILayout.Toggle("Play anim's if pref", _target.aAnimIfPrefs);
         if(_target.aAnimIfPrefs)
         {
-            _target.aAnimIfPrefsType = EditorGUILayoutArrays.StringArrayField(AFS_aAnimIfPrefsType, _target.aAnimIfPrefsType, "           -  Size", "           -  Value type");
-            _target.aAnimIfPrefsName = EditorGUILayoutArrays.StringArrayField(AFS_aAnimIfPrefsName, _target.aAnimIfPrefsName, "           -  Size", "           -  Pref name");
-            _target.aAnimIfPrefsValue = EditorGUILayoutArrays.StringArrayField(AFS_aAnimIfPrefsValue, _target.aAnimIfPrefsValue, "           -  Size", "           -  Value for start anim");
-            _target.aAnimIfPrefsAnim = EditorGUILayoutArrays.StringArrayField(AFS_aAnimIfPrefsAnim, _target.aAnimIfPrefsAnim, "           -  Size", "           -  Anim");
+            _target.aAnimIfPrefsType = EditorGUILayoutArrays.StringArrayField(AFS_aAnimIfPrefsType, _target.aAnimIfPrefsType, "   -  Size", "   -  Value type");
+            _target.aAnimIfPrefsName = EditorGUILayoutArrays.StringArrayField(AFS_aAnimIfPrefsName, _target.aAnimIfPrefsName, "   -  Size", "   -  Pref name");
+            _target.aAnimIfPrefsValue = EditorGUILayoutArrays.StringArrayField(AFS_aAnimIfPrefsValue, _target.aAnimIfPrefsValue, "   -  Size", "   -  Value for start anim");
+            _target.aAnimIfPrefsAnim = EditorGUILayoutArrays.StringArrayField(AFS_aAnimIfPrefsAnim, _target.aAnimIfPrefsAnim, "   -  Size", "   -  Anim");
         }
-        EditorGUILayout.HelpBox(" |   Anim Value Name's: ", MessageType.None);
+        EditorGUILayout.HelpBox("Anim Value Name's: ", MessageType.None);
         _target.aAVNInvisible = EditorGUILayout.TextField("Invisible: ", _target.aAVNInvisible);
         _target.aAVNVisible = EditorGUILayout.TextField("Visible: ", _target.aAVNVisible);
         enumReturnString();
@@ -888,11 +916,16 @@ public class CustomGUIEditor : Editor
         if (EO_jeTabletRestore == QuickAnim.EO_jeTabletRestore.DoNotRestore) { _target.jeTabletRestore = "DoNotRestore"; } else if (EO_jeTabletRestore == QuickAnim.EO_jeTabletRestore.RestoreFromReg) { _target.jeTabletRestore = "RestoreFromReg"; } else if (EO_jeTabletRestore == QuickAnim.EO_jeTabletRestore.RestoreFromPreviousSceneName) { _target.jeTabletRestore = "RestoreFromPreviousSceneName"; }
         if (EO_jeTabletExit == QuickAnim.EO_jeTabletExit.DoNotRestore) { _target.jeTabletExit = "DoNotRestore"; } else if (EO_jeTabletExit == QuickAnim.EO_jeTabletExit.RestoreFromReg) { _target.jeTabletExit = "RestoreFromReg"; } else if (EO_jeTabletExit == QuickAnim.EO_jeTabletExit.RestoreFromNextSceneName) { _target.jeTabletExit = "RestoreFromNextSceneName"; }
         if (EO_jeThisObjectLayout == QuickAnim.EO_jeThisObjectLayout.Classic) { _target.jeThisObjectLayout = "Classic"; } else if (EO_jeThisObjectLayout == QuickAnim.EO_jeThisObjectLayout.Tablet) { _target.jeThisObjectLayout = "Tablet"; }
+
+        QuickAnim.EO_mmSpawnUseJEMM = EO_mmSpawnUseJEMM;
+        QuickAnim.EO_jeTabletRestore = EO_jeTabletRestore;
+        QuickAnim.EO_jeTabletExit = EO_jeTabletExit;
+        QuickAnim.EO_jeThisObjectLayout = EO_jeThisObjectLayout;
     }
 }
 #endif
 
-
+//
 //  This script was create by @kochkaev
 //    - GitHub: https://github.com/kochkaev/
 //    - VK: https://vk.com/kleverdi/
