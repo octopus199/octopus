@@ -925,7 +925,6 @@ public class CustomGUIEditor : Editor
 }
 #endif
 
-//
 //  This script was create by @kochkaev
 //    - GitHub: https://github.com/kochkaev/
 //    - VK: https://vk.com/kleverdi/
